@@ -204,3 +204,6 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+catkin_install_python(PROGRAMS scripts/image_publisher.py scripts/image_show.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
