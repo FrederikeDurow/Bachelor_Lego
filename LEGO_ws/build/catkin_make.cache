@@ -1,2 +1,2 @@
-
--DCATKIN_DEVEL_PREFIX=/home/frederike/LEGO_ws/devel -DCMAKE_INSTALL_PREFIX=/home/frederike/LEGO_ws/install -G Unix Makefiles
+camera
+-DCATKIN_DEVEL_PREFIX=/home/rasmus/cvLEGO/Bachelor_Lego/LEGO_ws/devel -DCMAKE_INSTALL_PREFIX=/home/rasmus/cvLEGO/Bachelor_Lego/LEGO_ws/install -G Unix Makefiles
