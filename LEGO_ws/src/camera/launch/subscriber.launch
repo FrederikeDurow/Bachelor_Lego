@@ -1,0 +1,5 @@
+<launch>
+
+<node name="camera_sub" pkg="camera" type="image_subscriber.py" output="screen" respawn="true"/>
+
+</launch>
