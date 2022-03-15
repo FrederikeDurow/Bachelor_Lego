@@ -2,8 +2,6 @@
 <rtde_config>
 	<recipe key="out">
 		<field name="timestamp" type="DOUBLE"/>
-
-		<!--
 		<field name="target_q" type="VECTOR6D"/>
 		<field name="target_qd" type="VECTOR6D"/>
 		<field name="target_qdd" type="VECTOR6D"/>
@@ -13,20 +11,13 @@
 		<field name="actual_qd" type="VECTOR6D"/>
 		<field name="actual_current" type="VECTOR6D"/>
 		<field name="joint_control_output" type="VECTOR6D"/>
-		-->
-
 		<field name="actual_TCP_pose" type="VECTOR6D"/>
 		<field name="actual_TCP_speed" type="VECTOR6D"/>
 		<field name="actual_TCP_force" type="VECTOR6D"/>
 		<field name="target_TCP_pose" type="VECTOR6D"/>
 		<field name="target_TCP_speed" type="VECTOR6D"/>
-
-		<!--
 		<field name="actual_digital_input_bits" type="UINT64"/>
 		<field name="joint_temperatures" type="VECTOR6D"/>
-		-->
-
-		<!--
 		<field name="actual_execution_time" type="DOUBLE"/>
 		<field name="robot_mode" type="INT32"/>
 		<field name="joint_mode" type="VECTOR6INT32"/>
@@ -40,9 +31,7 @@
 		<field name="actual_robot_current" type="DOUBLE"/>
 		<field name="actual_joint_voltage" type="VECTOR6D"/>
 		<field name="actual_digital_output_bits" type="UINT64"/>
-		-->
 		<field name="runtime_state" type="UINT32"/>
-		<field name="tcp_force_scalar" type="DOUBLE"/>
 <!--
 		<field name="payload" type="DOUBLE"/>
 		<field name="payload_cog" type="VECTOR3D"/>

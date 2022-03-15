@@ -25,7 +25,7 @@
 import argparse
 import logging
 import sys
-sys.path.append('..')
+sys.path.append('/home/rasmus/Bachelor/Bachelor_Lego/UR')
 import rtde.rtde as rtde
 import rtde.rtde_config as rtde_config
 import rtde.csv_writer as csv_writer

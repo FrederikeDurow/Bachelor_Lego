@@ -23,7 +23,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-sys.path.append('..')
+sys.path.append('/home/rasmus/Bachelor/Bachelor_Lego/UR')
 import logging
 
 import rtde.rtde as rtde
@@ -34,7 +34,7 @@ import rtde.rtde_config as rtde_config
 
 ROBOT_HOST = 'localhost'
 ROBOT_PORT = 30004
-config_filename = 'control_loop_configuration.xml'
+config_filename = '/home/rasmus/Bachelor/Bachelor_Lego/UR/examples/control_loop_configuration.xml'
 
 keep_running = True
 

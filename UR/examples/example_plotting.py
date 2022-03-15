@@ -25,7 +25,7 @@
 import matplotlib.pyplot as plt
 
 import sys
-sys.path.append('..')
+sys.path.append('/home/rasmus/Bachelor/Bachelor_Lego/UR')
 import rtde.csv_reader as csv_reader
 
 with open('robot_data.csv') as csvfile:
