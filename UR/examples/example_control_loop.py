@@ -32,7 +32,7 @@ import rtde.rtde_config as rtde_config
 
 #logging.basicConfig(level=logging.INFO)
 
-ROBOT_HOST = 'localhost'
+ROBOT_HOST = '192.168.100.30'
 ROBOT_PORT = 30004
 config_filename = '/home/rasmus/Bachelor/Bachelor_Lego/UR/examples/control_loop_configuration.xml'
 
