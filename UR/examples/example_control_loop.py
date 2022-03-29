@@ -32,14 +32,13 @@ import rtde.rtde_config as rtde_config
 
 #logging.basicConfig(level=logging.INFO)
 
-ROBOT_HOST = '192.168.100.30'
+ROBOT_HOST = '192.168.1.68'
 ROBOT_PORT = 30004
 config_filename = '/home/rasmus/Bachelor/Bachelor_Lego/UR/examples/control_loop_configuration.xml'
 
 keep_running = True
 
 logging.getLogger().setLevel(logging.INFO)
-
 conf = rtde_config.ConfigFile(config_filename)
 state_names, state_types = conf.get_recipe('state')
 setp_names, setp_types = conf.get_recipe('setp')
@@ -47,6 +46,8 @@ watchdog_names, watchdog_types = conf.get_recipe('watchdog')
 
 con = rtde.RTDE(ROBOT_HOST, ROBOT_PORT)
 con.connect()
+if con.is_connected():
+    print('halleluja!')
 
 # get controller version
 con.get_controller_version()
