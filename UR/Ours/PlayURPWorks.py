@@ -1,4 +1,3 @@
-from tokenize import Double
 import rtde_control
 import rtde_receive
 import rtde_io
@@ -6,6 +5,11 @@ import time
 import argparse
 import dashboard_client
 from pynput.keyboard import Key, Controller
+
+# Note: In order to make this work, make sure that there is
+# not any custom set URcap IP/port. Additinally, have at least 2
+# move node, as it will only move between waypoint if is set up like that
+
 
 ROBOT_IP = '192.168.1.68'
 ROBOT_PORT = 30004
@@ -19,16 +23,20 @@ keyboard = Controller()
 rtde_das.connect()
 if rtde_das.isConnected():
     print('Connection to Dashboard is live')
-rtde_das.loadURP('/usbdisk/test2.urp')
 
-while True:
-    if keyboard.press('p'):
-        rtde_das.pause()
-        print("Pausing")
-    if keyboard.press('q'):
-        rtde_das.stop()
-        print("Stoping")
-        break
+#rtde_das.powerOn()
+#rtde_das.brakeRelease()
+rtde_das.loadURP('1234.urp')
+rtde_das.play()
+
+#while True:
+#    if keyboard.press('p'):
+#        rtde_das.pause()
+#        print("Pausing")
+#    if keyboard.press('q'):
+#        rtde_das.stop()
+#        print("Stoping")
+#        break
 
 
 
