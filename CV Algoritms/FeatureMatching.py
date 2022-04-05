@@ -145,10 +145,6 @@ test.drawMatches(30)
 
 
 
-
-
-
-
    # def drawFLANNMatches(self):
    #     # add "flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS" if you dont wont points not used
    #     matchesMask = [[0,0] for i in range(len(self.matches))]
