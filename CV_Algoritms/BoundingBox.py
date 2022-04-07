@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import csv
 
 class BoundingBox():
     
@@ -13,6 +14,8 @@ class BoundingBox():
         self.h_large = 0
         self.x_large = 0
         self.y_large = 0
+        self.data = []
+        self.create_data_file()
 
     def applyBoundingBox(self,image):
         self.img = image
@@ -20,15 +23,8 @@ class BoundingBox():
         thresh_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
         self.contours =  cv2.findContours(thresh_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
-    
-    def drawBoundingbox(self):
-        """ 
-        Draw the bounding box with largest areal onto the img/frame
 
-        Returns:
-            Output image with the bounding box drawn        
-        """
-          
+        # find largest bounding box
         for c in self.contours:
             x,y,w,h = cv2.boundingRect(c)
             if w*h > self.w_large*self.h_large:
@@ -36,10 +32,52 @@ class BoundingBox():
               self.h_large = h
               self.x_large = x
               self.y_large = y
-  
+        self.add_data()
+    
+    def add_data(self):
+        self.data.append('')
+        self.data.append(self.x_large)
+        self.data.append(self.y_large)
+        self.data.append(self.w_large)
+        self.data.append(self.h_large)
+
+
+    def drawBoundingbox(self):
+        """ 
+        Draw the bounding box with largest areal onto the img/frame
+        Returns:
+            Output image with the bounding box drawn        
+        """
         self.output_img = cv2.rectangle(self.img, (self.x_large, self.y_large), (self.x_large + self.w_large, self.y_large + self.h_large), (0,255,0), 2)
         return self.output_img
 
     def dataOutput(self):
-        data = ['', self.x_large, self.y_large, self.w_large, self.h_large]
-        return data
+        return self.data
+
+    def create_data_file(rois):
+        print()
+        header = ['Lap Nr']
+        roi_cnt = 1
+        for roi in rois:
+            header.append('Roi'+str(roi_cnt))
+            header.append('x')
+            header.append('y')
+            header.append('w')
+            header.append('h')
+            roi_cnt += 1
+
+        with open('testData.csv', 'w', encoding='UTF8', newline='') as f:
+            writer = csv.writer(f)
+
+            # write the header
+            writer.writerow(header)
+            f.close()
+
+
+    def save_data(self):
+        with open(".csv", 'a', encoding='UTF8', newline='') as f:
+            writer = csv.writer(f)
+            # write data row
+            writer.writerow(self.data)
+            self.data.clear()
+            f.close()

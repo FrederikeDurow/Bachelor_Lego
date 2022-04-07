@@ -4,37 +4,11 @@ import cv2
 import sys
 sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/CV_Algoritms')
 from CV_Algoritms import CornerDetector as cd
+from CV_Algoritms import BoundingBox as bb
  
 from random import randint #random numbers
 
-
-
-def boundingBox(image):
-  gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-  blur = cv2.GaussianBlur(gray,(5,5),0)
-  #ret, thresh_img = cv2.threshold(blur,91,255,cv2.THRESH_BINARY)
-  thresh_img = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
-  cv2.imshow("thresh",thresh_img)
-  contours =  cv2.findContours(thresh_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
-  
-  w_large = 0
-  h_large = 0
-  x_large = 0
-  y_large = 0
-  for c in contours:
-    x,y,w,h = cv2.boundingRect(c)
-    if w*h > w_large*h_large:
-      w_large = w
-      h_large = h
-      x_large = x
-      y_large = y
-  
-  cv2.rectangle(image, (x_large, y_large), (x_large + w_large, y_large + h_large), (0,255,0), 2)
-  data = ['', x_large, y_large, w_large, h_large]
-  return image, data
-
-
-def create_data_file(rois):
+def create_data_file(rois, name):
   header = ['Lap Nr']
   roi_cnt = 1
   for roi in rois:
@@ -53,8 +27,8 @@ def create_data_file(rois):
     f.close()
 
 
-def data_writer(data):
-  with open('testData.csv', 'a', encoding='UTF8', newline='') as f:
+def data_writer(data, name):
+  with open(name, 'a', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
   # write multiple rows
     writer.writerow(data)
@@ -67,6 +41,7 @@ def frame_writer(image, nr):
 
 def main():
   C_D = cd.CornerDetector('SHI TOMASI')
+  B_B = bb.BoundingBox()
   frame_cnt = 0
   cap = cv2.VideoCapture("/home/frederike/Documents/SDU-Robotics/Bachelor/31-03-Test1.mp4")
   if not cap.isOpened():
@@ -105,12 +80,8 @@ def main():
         crop_img = frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]]
         
         # BOUNDING BOX
-        bb_img, roi_dat = boundingBox(crop_img)
-        for i in roi_dat:
-          data.append(i)
+        B_B.applyBoundingBox(crop_img)
         
-        
-
         # CORNER DETECTION
         C_D.applyCornerDetector(crop_img)
         cd_img = C_D.drawCorners()
@@ -121,7 +92,7 @@ def main():
         
       
       frame_writer(frame, frame_cnt)
-      data_writer(data) 
+      B_B.save_data(data) 
 
     cv2.imshow('Corner detection',frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -135,3 +106,30 @@ if __name__ == "__main__":
     main()
 
 main()
+
+
+
+
+# def boundingBox(image):
+#   gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#   blur = cv2.GaussianBlur(gray,(5,5),0)
+#   #ret, thresh_img = cv2.threshold(blur,91,255,cv2.THRESH_BINARY)
+#   thresh_img = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+#   cv2.imshow("thresh",thresh_img)
+#   contours =  cv2.findContours(thresh_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+  
+#   w_large = 0
+#   h_large = 0
+#   x_large = 0
+#   y_large = 0
+#   for c in contours:
+#     x,y,w,h = cv2.boundingRect(c)
+#     if w*h > w_large*h_large:
+#       w_large = w
+#       h_large = h
+#       x_large = x
+#       y_large = y
+  
+  # cv2.rectangle(image, (x_large, y_large), (x_large + w_large, y_large + h_large), (0,255,0), 2)
+  # data = ['', x_large, y_large, w_large, h_large]
+  # return image, data
