@@ -9,13 +9,13 @@ class BoundingBox():
 
     output_img = None
 
-    def __init__(self):
+    def __init__(self, rois):
         self.w_large = 0
         self.h_large = 0
         self.x_large = 0
         self.y_large = 0
         self.data = []
-        self.create_data_file()
+        self.create_data_file(rois)
 
     def applyBoundingBox(self,image):
         self.img = image
@@ -54,19 +54,22 @@ class BoundingBox():
     def dataOutput(self):
         return self.data
 
-    def create_data_file(rois):
+    def create_data_file(self,rois):
         print()
         header = ['Lap Nr']
-        roi_cnt = 1
-        for roi in rois:
-            header.append('Roi'+str(roi_cnt))
-            header.append('x')
-            header.append('y')
-            header.append('w')
-            header.append('h')
-            roi_cnt += 1
+        roi = 0
+        while True:
+            if roi < rois:
+                header.append('Roi'+str(roi+1))
+                header.append('x')
+                header.append('y')
+                header.append('w')
+                header.append('h')
+                roi += 1
+            else:
+                break
 
-        with open('testData.csv', 'w', encoding='UTF8', newline='') as f:
+        with open('BB-Test1.csv', 'w', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
 
             # write the header
@@ -74,8 +77,9 @@ class BoundingBox():
             f.close()
 
 
-    def save_data(self):
-        with open(".csv", 'a', encoding='UTF8', newline='') as f:
+    def save_data(self, frame_nr):
+        self.data.insert(0, frame_nr)
+        with open("BB-Test1.csv", 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             # write data row
             writer.writerow(self.data)

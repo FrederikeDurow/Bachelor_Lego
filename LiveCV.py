@@ -8,40 +8,12 @@ from CV_Algoritms import BoundingBox as bb
  
 from random import randint #random numbers
 
-def create_data_file(rois, name):
-  header = ['Lap Nr']
-  roi_cnt = 1
-  for roi in rois:
-    header.append('Roi'+str(roi_cnt))
-    header.append('x')
-    header.append('y')
-    header.append('w')
-    header.append('h')
-    roi_cnt += 1
-
-  with open('testData.csv', 'w', encoding='UTF8', newline='') as f:
-    writer = csv.writer(f)
-
-    # write the header
-    writer.writerow(header)
-    f.close()
-
-
-def data_writer(data, name):
-  with open(name, 'a', encoding='UTF8', newline='') as f:
-    writer = csv.writer(f)
-  # write multiple rows
-    writer.writerow(data)
-    f.close()
-
-
 def frame_writer(image, nr):
   cv2.imwrite("frame%d.jpg" % nr, image)
 
 
 def main():
-  C_D = cd.CornerDetector('SHI TOMASI')
-  B_B = bb.BoundingBox()
+  
   frame_cnt = 0
   cap = cv2.VideoCapture("/home/frederike/Documents/SDU-Robotics/Bachelor/31-03-Test1.mp4")
   if not cap.isOpened():
@@ -64,7 +36,8 @@ def main():
 
     k = cv2.waitKey(0) & 0XFF
     if k == 115: 
-      create_data_file(rois)
+      C_D = cd.CornerDetector('SHI TOMASI', len(rois))
+      B_B = bb.BoundingBox(len(rois))
       break
     
   # APPLY CHOSEN METHOD TO ALL REGIONS OF INTEREST FOR EACH VIDEO FRAME
@@ -81,19 +54,18 @@ def main():
         
         # BOUNDING BOX
         B_B.applyBoundingBox(crop_img)
-        
+        bb_img = B_B.drawBoundingbox()
         # CORNER DETECTION
         C_D.applyCornerDetector(crop_img)
         cd_img = C_D.drawCorners()
+        C_D.save_data(frame_cnt)
 
         # Display the resulting frame
         frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = bb_img
         frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = cd_img
         
+      B_B.save_data(frame_cnt) 
       
-      frame_writer(frame, frame_cnt)
-      B_B.save_data(data) 
-
     cv2.imshow('Corner detection',frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break
@@ -133,3 +105,33 @@ main()
   # cv2.rectangle(image, (x_large, y_large), (x_large + w_large, y_large + h_large), (0,255,0), 2)
   # data = ['', x_large, y_large, w_large, h_large]
   # return image, data
+
+
+
+
+
+  # def create_data_file(rois, name):
+#   header = ['Lap Nr']
+#   roi_cnt = 1
+#   for roi in rois:
+#     header.append('Roi'+str(roi_cnt))
+#     header.append('x')
+#     header.append('y')
+#     header.append('w')
+#     header.append('h')
+#     roi_cnt += 1
+
+#   with open('testData.csv', 'w', encoding='UTF8', newline='') as f:
+#     writer = csv.writer(f)
+
+#     # write the header
+#     writer.writerow(header)
+#     f.close()
+
+
+# def data_writer(data, name):
+#   with open(name, 'a', encoding='UTF8', newline='') as f:
+#     writer = csv.writer(f)
+#   # write multiple rows
+#     writer.writerow(data)
+#     f.close()
