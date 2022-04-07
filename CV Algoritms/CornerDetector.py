@@ -51,13 +51,13 @@ class CornerDetector ():
 ## --------------------- How to use---------------------:
 
 # 1. Two image needed (should be from another class (ROI))
-img1 = cv.imread('lego.jpg') # Original image
+#img1 = cv.imread('lego.jpg') # Original image
 
 # 2. Create CornerDetector object (should be based on ROI at some point)
-obj = CornerDetector('SHI TOMASI')
+#obj = CornerDetector('SHI TOMASI')
 
 # 3. Apply corner detector
-obj.applyCornerDetector(img1)
+#obj.applyCornerDetector(img1)
 
 # 4. Show result
-obj.showCorners()
+#obj.showCorners()
