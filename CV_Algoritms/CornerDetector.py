@@ -8,6 +8,8 @@ class CornerDetector ():
 
     output_img = None
 
+    data = []
+
     def __init__(self, type):
 
         if type.upper() == 'FAST':
@@ -47,6 +49,33 @@ class CornerDetector ():
 
         cv.imshow('Corners', self.output_img)
         cv.waitKey(0)
+
+    def add_data(self):
+        for corners
+        self.data.append('')
+        self.data.append(self.corners.size)
+        self.data.append(self.corners.)
+
+    def dataoutput(self):
+        return self.data
+
+    def create_data_file(self,rois):
+        header = ['Lap Nr:']
+        roi_cnt = 1
+        corner_cnt = 1
+        for roi in rois:
+            header.append('Roi'+str(roi_cnt))
+            for corner in self.corners:
+                header.append('Corner'+str(corner_cnt))
+                header.append('Amount')
+                header.append('x')
+                header.append('y')
+                corner_cnt +=1
+            roi_cnt +=1
+
+
+
+
 
 ## --------------------- How to use---------------------:
 
