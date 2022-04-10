@@ -71,7 +71,7 @@ class CornerDetector ():
                 header.append('x')
                 header.append('y')
             
-                with open('CD-SmallSprings-Malfunctions-'+str(o+1)+'.csv', 'w', encoding='UTF8', newline='') as f:         #######################33
+                with open('CD-Cannon-'+str(o+1)+'.csv', 'w', encoding='UTF8', newline='') as f:         #######################33
                     writer = csv.writer(f)
 
                     # write the header
@@ -100,7 +100,7 @@ class CornerDetector ():
             self.current_object = 1
 
         self.data.insert(1, frame_nr)
-        with open('CD-SmallSprings-Malfunctions-'+str(self.current_object)+'.csv', 'a', encoding='UTF8', newline='') as f:         ########################
+        with open('CD-Cannon-'+str(self.current_object)+'.csv', 'a', encoding='UTF8', newline='') as f:         ########################
             writer = csv.writer(f)
             # write data row
             writer.writerow(self.data)

@@ -1,0 +1,2 @@
+1. Ens ROI må ikke over lappe i forhold til at tegne dem
+2. Corner er meget meget meget følsom for støj

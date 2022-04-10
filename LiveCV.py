@@ -13,9 +13,11 @@ def frame_writer(image, nr):
 
 
 def main():
+
   
   frame_cnt = 0
-  cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Small Springs/10-Malfunctions.mp4")    #######################33
+  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/Canons/Cannon.mp4")    #######################33
+  #output  =cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), 100, (1456,1088))
   if not cap.isOpened():
     print('Video was not loaded')
     sys.exit()
@@ -46,7 +48,7 @@ def main():
     ret, frame = cap.read()
     frame_cnt += 1
     
-    if frame_cnt % 800 == 0:
+    if frame_cnt % 1 == 0:
       data = [frame_cnt]
 
       for roi in rois:
@@ -66,6 +68,7 @@ def main():
         
       B_B.save_data(frame_cnt) 
       
+    #output.write(frame)  
     cv2.imshow('Corner detection',frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break

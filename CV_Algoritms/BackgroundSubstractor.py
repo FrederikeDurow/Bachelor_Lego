@@ -38,6 +38,7 @@ class BackgroundSubstractor():
         elif self.type == 'KNN' or self.type =='MOG2':
             cap =cv.VideoCapture(video)
             success, frame = cap.read()
+            output_frame  =cv.VideoWriter("output_frame.mp4", cv.VideoWriter_fourcc(*'MP4V'), 100, (1456,1088))
 
             while success:
                 fg_mask = self.bg_substractor.apply(frame)
@@ -53,6 +54,8 @@ class BackgroundSubstractor():
                         x,y,w,h = cv.boundingRect(c)
                         cv.rectangle(frame, (x,y), (x+w, y+h), (255,255,0), 2)
 
+                output_frame.write(frame)
+
                 cv.imshow('Mog',fg_mask)
                 cv.imshow('Thresh',thresh)
                 cv.imshow('Detecton', frame)
@@ -67,10 +70,10 @@ class BackgroundSubstractor():
  ## --------------------- How to use---------------------:
 
  # 1. One video needed (should be from another class)
-video1 = 'slow_traffic_small.mp4'
+video1 = 'C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/Canons/Cannon.mp4'
 
  # 2. Create a BacgroundSubstractor object (BBS or MOG2 or KNN)
-test = BackgroundSubstractor('KNN')
+test = BackgroundSubstractor('MOG2')
 
  # 3. Apply detector (first is the template, the other is the one to check on)¨
 test.applyBackgroundSubstractor(video1)
