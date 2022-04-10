@@ -15,7 +15,7 @@ def frame_writer(image, nr):
 def main():
   
   frame_cnt = 0
-  cap = cv2.VideoCapture("/home/frederike/Documents/SDU-Robotics/Bachelor/31-03-Test1.mp4")
+  cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Small Springs/10-Malfunctions.mp4")    #######################33
   if not cap.isOpened():
     print('Video was not loaded')
     sys.exit()
