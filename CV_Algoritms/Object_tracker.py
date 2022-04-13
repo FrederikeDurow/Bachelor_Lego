@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import time
 import imutils
+import Multi_Color_Dectector
 
 ct = CentroidTracker.centroidTracker()
 
@@ -13,6 +14,9 @@ print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
+Col_detect = Multi_Color_Dectector.Multi_Color_Dectector 
+confidence = 0.5
+
 while True:
 
     frame = vs.read()
@@ -21,14 +25,12 @@ while True:
     if W is None or H is None:
         (H, W) = frame.shape[:2]
 
-    # SHOULD BE OUR OWN DETECTOR (MAYBE COLOR DETECTOR)
-    blob = cv2.dnn.blobfromimage(frame, 1.0, (W,H), (104.0, 177.0, 123.0))
-    net.setInput(blob)
-    detections = net.forward()
+    # SHOULD BE OUR OWN DETECTOR (MAYBE COLOR DETECTOR) (SHOULD JUST RETURN BOUNDING BOXES)
+    detections = Col_detect.applyColorDectector(frame)
     rects = []
 
     for i in range(0, detections.shape[2]):
-        if detections[0,0,i,2] > args["confidence"]:
+        if detections[0,0,i,2] > confidence:
 
             box = detections[0,0,i, 3:7] * np.array([W,H,W,H])
             rects.append(box.astype("int"))

@@ -58,7 +58,7 @@ class Multi_Color_Dectector():
         self.contours, self.hierarchy = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         self.drawRegions(self.blue, 100)
 
-        return self.frame
+        return self.frame, self.contours
 
     def drawRegions(self, color, area_size):
         for pic, contour in enumerate(self.contours):
