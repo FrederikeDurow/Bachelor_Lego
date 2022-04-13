@@ -50,9 +50,13 @@ class Multi_Color_Dectector():
         res_blue = cv2.bitwise_and(self.frame, self.frame, mask = blue_mask)
 
         self.contours, self.hierarchy = cv2.findContours(red_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        self.drawRegions(self.red, 300)
-        self.drawRegions(self.green, 300)
-        self.drawRegions(self.blue, 300)
+        self.drawRegions(self.red, 100)
+
+        self.contours, self.hierarchy = cv2.findContours(green_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        self.drawRegions(self.green, 100)
+
+        self.contours, self.hierarchy = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        self.drawRegions(self.blue, 100)
 
         return self.frame
 
@@ -72,8 +76,7 @@ videofeed = cv2.VideoCapture(0)
 while(1):
     _, imageFrame = videofeed.read()
 
-    cv2.imshow("Multiple Color Detector", Dectector.applyColorDectector())
+    cv2.imshow("Multiple Color Detector", Dectector.applyColorDectector(imageFrame))
     if cv2.waitKey(10) & 0xFF == ord('q'):
-        cap.release()
         cv2.destroyAllWindows()
         break
