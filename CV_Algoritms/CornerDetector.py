@@ -1,4 +1,3 @@
-from cv2 import cornerSubPix
 import numpy as np
 import csv
 import cv2 as cv
