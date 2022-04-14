@@ -1,3 +1,5 @@
+# DET ER BEDRE AT BRUGE DIREKTE FRA CAMERA CALIBRATION SE LINK I TEAMS UNDER SAMME THREAD
+
 # Metoden her bruger triangular similarity som dens måde at regne det ud på
 # Her bruger den en objekt den allerede kender dimensionerne på.
 # Derefter laver man noget billede behandling for at udtrække dens countour
