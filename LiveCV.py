@@ -1,4 +1,5 @@
 import csv
+from cv2 import imshow
 import numpy as np
 import cv2
 import sys
@@ -16,7 +17,7 @@ def main():
 
   
   frame_cnt = 0
-  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/Canons/Cannon.mp4")    #######################33
+  cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Big Springs/Light Changes.mp4")    #######################33
   #output  =cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), 100, (1456,1088))
   if not cap.isOpened():
     print('Video was not loaded')
@@ -38,7 +39,7 @@ def main():
 
     k = cv2.waitKey(0) & 0XFF
     if k == 115: 
-      C_D = cd.CornerDetector('SHI TOMASI', len(rois))
+      #C_D = cd.CornerDetector('SHI TOMASI', len(rois))
       B_B = bb.BoundingBox(len(rois))
       break
     
@@ -48,23 +49,24 @@ def main():
     ret, frame = cap.read()
     frame_cnt += 1
     
-    if frame_cnt % 1 == 0:
+    if frame_cnt % 800 == 0:
       data = [frame_cnt]
 
       for roi in rois:
         crop_img = frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]]
         
+        
         # BOUNDING BOX
         B_B.applyBoundingBox(crop_img)
         bb_img = B_B.drawBoundingbox()
         # CORNER DETECTION
-        C_D.applyCornerDetector(crop_img)
-        cd_img = C_D.drawCorners()
-        C_D.save_data(frame_cnt)
+        #C_D.applyCornerDetector(crop_img)
+        #cd_img = C_D.drawCorners()
+        #C_D.save_data(frame_cnt)
 
         # Display the resulting frame
         frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = bb_img
-        frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = cd_img
+        #frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = cd_img
         
       B_B.save_data(frame_cnt) 
       

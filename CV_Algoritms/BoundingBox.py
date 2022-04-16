@@ -40,6 +40,11 @@ class BoundingBox():
         self.data.append(self.y_large)
         self.data.append(self.w_large)
         self.data.append(self.h_large)
+        self.w_large = 0
+        self.h_large = 0
+        self.x_large = 0
+        self.y_large = 0
+
 
 
     def drawBoundingbox(self):
@@ -69,7 +74,7 @@ class BoundingBox():
             else:
                 break
 
-        with open('BB-Cannon.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
+        with open('BB-BigSprings-LightChanges.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
             writer = csv.writer(f)
 
             # write the header
@@ -79,7 +84,7 @@ class BoundingBox():
 
     def save_data(self, frame_nr):
         self.data.insert(0, frame_nr)
-        with open("BB-Cannon.csv", 'a', encoding='UTF8', newline='') as f:      ################################
+        with open("BB-BigSprings-LightChanges.csv", 'a', encoding='UTF8', newline='') as f:      ################################
             writer = csv.writer(f)
             # write data row
             writer.writerow(self.data)
