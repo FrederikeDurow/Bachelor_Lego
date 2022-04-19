@@ -82,7 +82,7 @@ dim = (width, height)
 # resize image
 resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
-test = ConnectedComponents(1,1000,1,1000,1,1000)
+test = ConnectedComponents(1,10000,1,10000,1,10000)
 test.applyConnectedComponents(resized)
 test.drawComponents()
 
