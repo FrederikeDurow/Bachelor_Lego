@@ -25,21 +25,21 @@ class CornerDetector ():
             print('Please use proper type: FAST or SHI THOMASI')
         self.create_data_file()
 
-
     def applyCornerDetector(self, img):
         self.img = img
         gray_img = cv.cvtColor(self.img, cv.COLOR_BGR2GRAY)
+        blurred = cv.GaussianBlur(gray_img, (11, 11), 0)
+
 
         if self.type =='FAST':
-            gray_img = np.float32(gray_img)
-            self.corners = cv.cornerHarris(gray_img, 2, 5, 0.07)
+            blurred = np.float32(blurred)
+            self.corners = cv.cornerHarris(blurred, 2, 5, 0.07)
             self.corners = cv.dilate(self.corners, None)
 
         elif self.type == 'SHI TOMASI':
-            self.corners = cv.goodFeaturesToTrack(gray_img,25,0.01,10)
+            self.corners = cv.goodFeaturesToTrack(blurred,20,0.1,10)
             self.corners = np.int0(self.corners)
             self.add_data()
-
 
     def drawCorners(self):
 
@@ -57,8 +57,6 @@ class CornerDetector ():
 
     def dataoutput(self):
         return self.data
-
-    
 
     def create_data_file(self):
         o = 0

@@ -24,6 +24,11 @@ class BoundingBox():
 
         self.contours =  cv2.findContours(thresh_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
 
+        self.w_large = 0
+        self.h_large = 0
+        self.x_large = 0
+        self.y_large = 0
+
         # find largest bounding box
         for c in self.contours:
             x,y,w,h = cv2.boundingRect(c)
@@ -40,12 +45,6 @@ class BoundingBox():
         self.data.append(self.y_large)
         self.data.append(self.w_large)
         self.data.append(self.h_large)
-        self.w_large = 0
-        self.h_large = 0
-        self.x_large = 0
-        self.y_large = 0
-
-
 
     def drawBoundingbox(self):
         """ 
