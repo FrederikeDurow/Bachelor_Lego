@@ -1,19 +1,21 @@
 from collections import deque
-from imutils.video import VideoStream
 import numpy as np
 import cv2
-import imutils
 import time
 
 greenLower = (29, 86, 6)
 greenUpper = (64, 255, 255)
 buffer_size = 32
 
+<<<<<<< Updated upstream
 pts = deque([32])
+=======
+pts = deque([buffer_size])
+>>>>>>> Stashed changes
 counter = 0
 (dX, dY) = (0, 0)
 
-vs = VideoStream(src=0).start()
+vs = cv2.VideoCapture(0)
 time.sleep(2.0)
 
 while True:
@@ -27,7 +29,6 @@ while True:
 		break
 	# resize the frame, blur it, and convert it to the HSV
 	# color space
-	frame = imutils.resize(frame, width=600)
 	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 	# construct a mask for the color "green", then perform
@@ -38,9 +39,8 @@ while True:
 	mask = cv2.dilate(mask, None, iterations=2)
 	# find contours in the mask and initialize the current
 	# (x, y) center of the ball
-	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-		cv2.CHAIN_APPROX_SIMPLE)
-	cnts = imutils.grab_contours(cnts)
+	cnts, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
 	center = None
 
     # only proceed if at least one contour was found

@@ -1,9 +1,9 @@
 import CentroidTracker
-from imutils.video import VideoStream
+#from imutils.video import VideoStream
 import numpy as np
 import cv2
 import time
-import imutils
+#import imutils
 import Multi_Color_Dectector
 
 ct = CentroidTracker.centroidTracker()
@@ -11,19 +11,20 @@ ct = CentroidTracker.centroidTracker()
 (H, W) = (None,None)
 
 print("[INFO] starting video stream...")
-vs = VideoStream(src=0).start()
+#vs = VideoStream(src=0).start()
+vs = cv2.VideoCapture(0)
 time.sleep(2.0)
 
-Col_detect = Multi_Color_Dectector.Multi_Color_Dectector 
+Col_detect = Multi_Color_Dectector.multi_color_dectector()
 confidence = 0.5
 
 while True:
 
     frame = vs.read()
-    frame = imutils.resize(frame, width= 400)
+    #frame = imutils.resize(frame, width= 400)
 
-    if W is None or H is None:
-        (H, W) = frame.shape[:2]
+    #if W is None or H is None:
+     #   (H, W) = frame.shape[:2]
 
     # SHOULD BE OUR OWN DETECTOR (MAYBE COLOR DETECTOR) (SHOULD JUST RETURN BOUNDING BOXES)
     detections = Col_detect.applyColorDectector(frame)
