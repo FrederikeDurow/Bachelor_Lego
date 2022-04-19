@@ -1,4 +1,4 @@
-Lap Nr,Roi1,x,y,w,h,Roi2,x,y,w,h,Roi3,x,y,w,h,Roi4,x,y,w,h
+Lap Nr,Roi1,Roi1_x,Roi1_y,Roi1_w,Roi1_h,Roi2,Roi2_x,Roi2_y,Roi2_w,Roi2_h,Roi3,Roi3_x,Roi3_y,Roi3_w,Roi3_h,Roi4,Roi4_x,Roi4_y,Roi4_w,Roi4_h
 800,,8,6,17,55,,13,7,15,46,,13,9,14,61,,9,27,17,32
 1600,,8,6,17,55,,13,7,16,46,,13,9,14,61,,10,14,16,45
 2400,,6,12,16,49,,11,15,14,45,,9,15,15,59,,6,18,16,44
