@@ -3,7 +3,8 @@ from cv2 import imshow
 import numpy as np
 import cv2
 import sys
-sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/CV_Algoritms')
+# sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/CV_Algoritms')
+sys.path.insert(0, 'C:/LEGO/Bachelor_Lego')
 from CV_Algoritms import CornerDetector as cd
 from CV_Algoritms import BoundingBox as bb
  
@@ -17,7 +18,8 @@ def main():
 
   
   frame_cnt = 0
-  cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Big Springs/Light Changes.mp4")    #######################33
+  # cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Big Springs/Light Changes.mp4")    #######################33
+  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/Small Springs/Surrounding Changes.mp4")
   #output  =cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), 100, (1456,1088))
   if not cap.isOpened():
     print('Video was not loaded')

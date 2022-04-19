@@ -66,15 +66,15 @@ class BoundingBox():
         while True:
             if roi < rois:
                 header.append('Roi'+str(roi+1))
-                header.append('x')
-                header.append('y')
-                header.append('w')
-                header.append('h')
+                header.append('Roi'+str(roi+1)+'_x')
+                header.append('Roi'+str(roi+1)+'_y')
+                header.append('Roi'+str(roi+1)+'_w')
+                header.append('Roi'+str(roi+1)+'_h')
                 roi += 1
             else:
                 break
 
-        with open('BB-BigSprings-LightChanges.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
+        with open('BB-surrounding-changes.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
             writer = csv.writer(f)
 
             # write the header
@@ -84,7 +84,7 @@ class BoundingBox():
 
     def save_data(self, frame_nr):
         self.data.insert(0, frame_nr)
-        with open("BB-BigSprings-LightChanges.csv", 'a', encoding='UTF8', newline='') as f:      ################################
+        with open("BB-surrounding-changes.csv", 'a', encoding='UTF8', newline='') as f:      ################################
             writer = csv.writer(f)
             # write data row
             writer.writerow(self.data)
