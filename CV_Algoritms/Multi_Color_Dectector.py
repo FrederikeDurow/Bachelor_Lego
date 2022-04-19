@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import time
 
 # THREE DIFFERENT COLOR DETECTOR
 
@@ -72,6 +73,7 @@ class multi_color_dectector():
 Dectector = multi_color_dectector()
 
 videofeed = cv2.VideoCapture(0)
+time.sleep(2.0)
 
 while(1):
     _, imageFrame = videofeed.read()

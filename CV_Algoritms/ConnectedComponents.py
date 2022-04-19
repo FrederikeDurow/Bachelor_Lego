@@ -72,9 +72,9 @@ class ConnectedComponents ():
 		cv2.imshow("Mask", self.mask)
 		cv2.waitKey(0)
 
-img = cv2.imread('soccer.jpg')
+img = cv2.imread('C:\LEGO\Bachelor_Lego\CV_Algoritms\BS_mal_scr.jpg')
 
-scale_percent = 18 # percent of original size
+scale_percent = 100 # percent of original size
 width = int(img.shape[1] * scale_percent / 100)
 height = int(img.shape[0] * scale_percent / 100)
 dim = (width, height)
@@ -82,7 +82,7 @@ dim = (width, height)
 # resize image
 resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
-test = ConnectedComponents(1,10000,1,10000,1,10000)
+test = ConnectedComponents(20,100000,20,100000,20,100000)
 test.applyConnectedComponents(resized)
 test.drawComponents()
 
