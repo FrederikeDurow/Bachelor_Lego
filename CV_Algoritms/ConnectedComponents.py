@@ -73,8 +73,17 @@ class ConnectedComponents ():
 		cv2.waitKey(0)
 
 img = cv2.imread('soccer.jpg')
+
+scale_percent = 18 # percent of original size
+width = int(img.shape[1] * scale_percent / 100)
+height = int(img.shape[0] * scale_percent / 100)
+dim = (width, height)
+  
+# resize image
+resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+
 test = ConnectedComponents(1,1000,1,1000,1,1000)
-test.applyConnectedComponents(img)
+test.applyConnectedComponents(resized)
 test.drawComponents()
 
 

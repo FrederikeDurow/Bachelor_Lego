@@ -19,7 +19,7 @@ def main():
   
   frame_cnt = 0
   # cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Big Springs/Light Changes.mp4")    #######################33
-  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/Big Springs/Light Changes.mp4")
+  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/Big Springs/10-Malfunction.mp4")
   #output  =cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), 100, (1456,1088))
   if not cap.isOpened():
     print('Video was not loaded')
