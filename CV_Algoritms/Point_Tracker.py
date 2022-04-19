@@ -6,7 +6,7 @@ import time
 greenLower = (29, 86, 6)
 greenUpper = (64, 255, 255)
 buffer_size = 32
-
+	
 pts = deque([buffer_size])
 counter = 0
 (dX, dY) = (0, 0)

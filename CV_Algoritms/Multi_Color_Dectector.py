@@ -69,14 +69,14 @@ class multi_color_dectector():
 
 # ---- HOW TO USE -----
 
-#Dectector = Multi_Color_Dectector()
-#
-#videofeed = cv2.VideoCapture(0)
-#
-#while(1):
-#    _, imageFrame = videofeed.read()
-#
-#    cv2.imshow("Multiple Color Detector", Dectector.applyColorDectector(imageFrame))
-#    if cv2.waitKey(10) & 0xFF == ord('q'):
-#        cv2.destroyAllWindows()
-#        break
+Dectector = multi_color_dectector()
+
+videofeed = cv2.VideoCapture(0)
+
+while(1):
+    _, imageFrame = videofeed.read()
+
+    cv2.imshow("Multiple Color Detector", Dectector.applyColorDectector(imageFrame))
+    if cv2.waitKey(10) & 0xFF == ord('q'):
+        cv2.destroyAllWindows()
+        break
