@@ -25,7 +25,7 @@ elif tracking_type == 'CSRT':
 print(tracker)
 
 #Open video & print error message if video was not opened
-testVid = cv2.VideoCapture('/home/rasmus/Desktop/Test Videos/07-04/Big Springs/50-Correct-Laps.mp4')
+testVid = cv2.VideoCapture('/home/rasmus/Desktop/Test Videos/Test/07-04/Big Springs/100-Correct-Laps.mp4')
 if not testVid.isOpened():
     print('Video was not loaded')
     sys.exit()
