@@ -3,6 +3,7 @@ import cv2
 import time
 
 # THREE DIFFERENT COLOR DETECTOR
+output  =cv2.VideoWriter("Multicolor.avi", cv2.VideoWriter_fourcc(*'MPEG'), 30 , (1456,1088))
 
 class multi_color_dectector():
 
@@ -51,10 +52,10 @@ class multi_color_dectector():
         res_blue = cv2.bitwise_and(self.frame, self.frame, mask = blue_mask)
 
         self.contours, self.hierarchy = cv2.findContours(red_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        self.drawRegions(self.red, 100)
+        #self.drawRegions(self.red, 100)
 
         self.contours, self.hierarchy = cv2.findContours(green_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        self.drawRegions(self.green, 100)
+        #self.drawRegions(self.green, 100)
 
         self.contours, self.hierarchy = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         self.drawRegions(self.blue, 100)
@@ -72,13 +73,15 @@ class multi_color_dectector():
 
 Dectector = multi_color_dectector()
 
-videofeed = cv2.VideoCapture(0)
+videofeed = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/20-04/Sideblocked (2).mp4")
 time.sleep(2.0)
 
 while(1):
     _, imageFrame = videofeed.read()
 
-    cv2.imshow("Multiple Color Detector", Dectector.applyColorDectector(imageFrame))
+    frame, _ = Dectector.applyColorDectector(imageFrame)
+    output.write(frame) 
+    cv2.imshow("Multiple Color Detector", frame)
     if cv2.waitKey(10) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break

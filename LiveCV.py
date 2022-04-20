@@ -55,8 +55,6 @@ def main():
       data = [frame_cnt]
       #cv2.imwrite("frame"+str(frame_cnt)+".jpg",frame)
 
-      
-
       for roi in rois:
         crop_img = frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]]
         
