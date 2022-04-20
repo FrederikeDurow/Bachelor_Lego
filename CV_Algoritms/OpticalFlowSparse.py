@@ -18,6 +18,7 @@ output_img = frame
 output_img[corners > 0.01 * corners.max()] =[0,0,255]
 
 parameters_lucas_kanade = dict(winSize = (15,15), maxLevel = 2, criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+diso = cv2.DISOpticalFlow_create(cv2.DISOpticalFlow_PRESET_MEDIUM)
 
 header = ['Lap Nr', 'Point 1', 'X', 'Y']
 with open('Point Tracking.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
