@@ -46,17 +46,17 @@ def main():
       break
     
   # APPLY CHOSEN METHOD TO ALL REGIONS OF INTEREST FOR EACH VIDEO FRAME
-  while True:
-    ret, frame = cap.read()
-    frame_cnt += 1
-    if frame_cnt > 90:
-      frame_cnt = 0
-      break
+  #while True:
+  #  ret, frame = cap.read()
+  #  frame_cnt += 1
+  #  if frame_cnt > 90:
+  #    frame_cnt = 0
+  #    break
   while True:
     
     ret, frame = cap.read()
     frame_cnt += 1
-    if frame_cnt % 100 == 0:
+    if frame_cnt % 800 == 0:
       data = [frame_cnt]
       #cv2.imwrite("frame"+str(frame_cnt)+".jpg",frame)
       for roi in rois:
