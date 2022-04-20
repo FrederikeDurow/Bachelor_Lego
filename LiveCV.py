@@ -19,7 +19,7 @@ def main():
   
   frame_cnt = 0
   # cap = cv2.VideoCapture("/media/frederike/TOSHIBA EXT/Test/07-04/Big Springs/Light Changes.mp4")    #######################33
-  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/LongThing/Cut in half.mp4")
+  cap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/07-04/LongThing/50-correct.mp4")
   # output  =cv2.VideoWriter("output.avi", cv2.VideoWriter_fourcc(*'MPEG'), 100, (1456,1088))
   if not cap.isOpened():
     print('Video was not loaded')
@@ -47,17 +47,20 @@ def main():
     
   # APPLY CHOSEN METHOD TO ALL REGIONS OF INTEREST FOR EACH VIDEO FRAME
   while True:
+    ret, frame = cap.read()
+    frame_cnt += 1
+    if frame_cnt > 130:
+      frame_cnt = 0
+      break
+  while True:
     
     ret, frame = cap.read()
     frame_cnt += 1
-    
-    if frame_cnt % 1 == 0:
+    if frame_cnt % 100 == 0:
       data = [frame_cnt]
       #cv2.imwrite("frame"+str(frame_cnt)+".jpg",frame)
-
       for roi in rois:
         crop_img = frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]]
-        
         # BOUNDING BOX
         B_B.applyBoundingBox(crop_img)
         C_D.applyCornerDetector(crop_img)
@@ -67,19 +70,16 @@ def main():
         # CORNER DETECTION
         cd_img = C_D.drawCorners()
         C_D.save_data(frame_cnt)
-
         # Display the resulting frame
         frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = bb_img
         frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]] = cd_img
-        
-
       B_B.save_data(frame_cnt) 
       # cv2.imwrite("frame"+str(frame_cnt)+".jpg",frame) 
-      
-    # output.write(frame) 
-    cv2.imshow('Corner detection',frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-      break
+
+      # output.write(frame) 
+      cv2.imshow('Corner detection',frame)
+      if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
   # When everything done, release the capture
   cap.release()
