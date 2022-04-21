@@ -1,9 +1,14 @@
 import numpy as np
 import cv2
 import csv
+import sys
 
-vidCap = cv2.VideoCapture("C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/20-04/TopView.mp4")
-output  =cv2.VideoWriter("output.avi", cv2.VideoWriter_fourcc(*'MPEG'), 30, (1456,1088))
+vidCap = cv2.VideoCapture('/home/rasmus/Desktop/Test Videos/Test/07-04/Big Springs/100-Correct-Laps.mp4')
+if not vidCap.isOpened():
+   print('Video was not loaded')
+   sys.exit()
+
+output  =cv2.VideoWriter("Point-Tracking_Correct.avi", cv2.VideoWriter_fourcc(*'MPEG'), 30, (1456,1088))
 
 ret, frame = vidCap.read()
 init_frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -15,15 +20,14 @@ cv2.imshow('Blurred', blurred)
 corners = np.int0(corners)
 
 output_img = frame
-output_img[corners > 0.01 * corners.max()] =[0,0,255]
+#output_img[corners > 0.01 * corners.max()] =[0,0,255]
 
 parameters_lucas_kanade = dict(winSize = (15,15), maxLevel = 2, criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 diso = cv2.DISOpticalFlow_create(cv2.DISOpticalFlow_PRESET_MEDIUM)
 
 header = ['Lap Nr', 'Point 1', 'X', 'Y']
-with open('Point Tracking.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
+with open('Point-Tracking_Correct.csv', 'w', encoding='UTF8', newline='') as f:      ############################3333
             writer = csv.writer(f)
-
             # write the header
             writer.writerow(header)
             f.close()
@@ -75,7 +79,7 @@ while True:
         j, k = old_points.ravel()
 
         data = [frame_counter,0,x,y]
-        with open("Point Tracking.csv", 'a', encoding='UTF8', newline='') as f:      ################################
+        with open("Point-Tracking_Correct.csv", 'a', encoding='UTF8', newline='') as f:      ################################
             writer = csv.writer(f)
             # write data row
             writer.writerow(data)
