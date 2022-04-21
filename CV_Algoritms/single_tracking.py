@@ -2,9 +2,10 @@ import cv2 #openCV
 import sys #OS functions
 from random import randint #random numbers
 
+#output  =cv2.VideoWriter("TRAIN_CSRT.avi", cv2.VideoWriter_fourcc(*'MPEG'), 30 , (1456,1088))
 #List of tracking algorithms
 tracking_types = ['BOOSTING', 'MIL', 'KCF', 'TLD', 'MEDIANFLOW', 'MOSSE', 'CSRT']
-tracking_type = tracking_types[2]
+tracking_type = tracking_types[6]
 print(tracking_type)
 
 if tracking_type == 'BOOSTING':
@@ -25,7 +26,7 @@ elif tracking_type == 'CSRT':
 print(tracker)
 
 #Open video & print error message if video was not opened
-testVid = cv2.VideoCapture('/home/rasmus/Desktop/Test Videos/Test/07-04/Big Springs/100-Correct-Laps.mp4')
+testVid = cv2.VideoCapture('/home/rasmus/Desktop/Test Videos/Test/20-04/TopView.mp4')
 if not testVid.isOpened():
     print('Video was not loaded')
     sys.exit()
@@ -66,6 +67,7 @@ while True:
         cv2.putText(frame, 'Tracking failure!', (100,80), cv2.FONT_HERSHEY_SIMPLEX, .75, (0,0,255), 2)
 
     cv2.putText(frame, tracking_type, (100,20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+    #output.write(frame) 
     cv2.imshow('Tracking Test', frame)
     if cv2.waitKey(1) & 0xFF == 27: #when escape is pressed
         break
