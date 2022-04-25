@@ -1,0 +1,31 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+Item {
+    id: item1
+    width: 337
+    height: 33
+    background: rectangle983
+
+    Image {
+        id: rectangle983
+        x: -19
+        y: -14
+        source: "../../Components/Select_type_section/Rectangle 983.png"
+        fillMode: Image.PreserveAspectFit
+    }
+    TextInput {
+        id: nameinput
+        x: 8
+        y: 9
+        width: 321
+        height: 16
+        color: "white"
+
+    }
+    states: [
+        State {
+            name: "Normal"
+        }
+    ]
+}

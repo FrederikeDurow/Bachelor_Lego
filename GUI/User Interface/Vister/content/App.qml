@@ -51,6 +51,16 @@ Window {
             fillMode: Image.PreserveAspectFit
         }
 
+        Text {
+            id: text1
+            x: 766
+            y: 157
+            color: "#ffffff"
+            text: qsTr("Welcome To Vister")
+            font.pixelSize: 80
+            font.family: "Arial"
+        }
+
         Loadproject_button {
             id: loadproject_button
             x: 582
@@ -68,6 +78,26 @@ Window {
             id: createproject_button
             x: 140
             y: 577
+
+            Connections {
+                target: createproject_button
+                onClicked: selectTestingType.state = 'Normal'
+            }
+        }
+
+
+
+        Text {
+            id: text2
+            x: 766
+            y: 298
+            color: "#bccbe0"
+            text: qsTr("Vister is a Computer Vision based program that enables you to create various experiment using only a Camera
+and a UR.
+
+Vistor allows you to extract essential information from the UR robot while in operation simountanous applying
+Computer Vision algorithms to each element to detect how they behave under different circumstances ")
+            font.pixelSize: 16
         }
 
         Popup {
@@ -78,12 +108,12 @@ Window {
             enabled: false
         }
 
-        Select_type_scrollbar {
-            id: select_type_scrollbar
-            x: 1182
-            y: 193
-            width: 51
-            height: 522
+        SelectTestingType {
+            id: selectTestingType
+            x: 356
+            y: 133
+            visible: false
+            enabled: false
         }
     }
 
@@ -98,6 +128,6 @@ Window {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.75}
+    D{i:0;formeditorZoom:0.5}
 }
 ##^##*/

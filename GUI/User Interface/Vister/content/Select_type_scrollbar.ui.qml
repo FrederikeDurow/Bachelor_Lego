@@ -19,7 +19,8 @@ Slider {
     value: 0
 
     stepSize: 0
-    to: 100
+    to: 0
+    from: 100
     snapMode: Slider.NoSnap
 
     background: Image {
@@ -52,7 +53,7 @@ Slider {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}
+    D{i:0;height:597;width:51}
 }
 ##^##*/
 
