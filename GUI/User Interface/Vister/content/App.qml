@@ -32,15 +32,72 @@ import QtQuick.Window
 import Vister
 
 Window {
-    width: mainScreen.width
-    height: mainScreen.height
+    width: homeScreen.width
+    height: homeScreen.height
+    opacity: 1
 
     visible: true
     title: "Vister"
+    
+    Screen01 {
+        id: homeScreen
+
+        Image {
+            id: logo_big
+            x: 372
+            y: 131
+            height: 300
+            source: "images/LogoRezisedto256x256.svg"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        Loadproject_button {
+            id: loadproject_button
+            x: 582
+            y: 577
+            checkable: true
+            autoExclusive: true
+
+            Connections {
+                target: loadproject_button
+                onClicked: popup.state = 'Normal'
+            }
+        }
+
+        Createproject_button {
+            id: createproject_button
+            x: 140
+            y: 577
+        }
+
+        Popup {
+            id: popup
+            x: 538
+            y: 304
+            visible: false
+            enabled: false
+        }
+
+        Select_type_scrollbar {
+            id: select_type_scrollbar
+            x: 1182
+            y: 193
+            width: 51
+            height: 522
+        }
+    }
 
     Screen01 {
-        id: mainScreen
+        id: setupScreen
+        x: 0
+        y: 1124
     }
 
 }
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.75}
+}
+##^##*/
