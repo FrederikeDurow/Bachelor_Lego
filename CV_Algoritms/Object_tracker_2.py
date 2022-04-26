@@ -3,8 +3,9 @@ import CentroidTracker
 import numpy as np
 import cv2
 import time
+
+import Object_Color_Detector as Object_Color_Detector
 #import imutils
-import Multi_Color_Dectector
 
 ct = CentroidTracker.centroidTracker()
 
@@ -15,12 +16,12 @@ print("[INFO] starting video stream...")
 vs = cv2.VideoCapture(0)
 time.sleep(2.0)
 
-Col_detect = Multi_Color_Dectector.multi_color_dectector()
-confidence = 0.5
+Col_detect = Object_Color_Detector.obj_color_dectector()
+confidence = 1
 
 while True:
 
-    frame = vs.read()
+    ret, frame = vs.read()
     #frame = imutils.resize(frame, width= 400)
 
     #if W is None or H is None:
@@ -28,15 +29,16 @@ while True:
 
     # SHOULD BE OUR OWN DETECTOR (MAYBE COLOR DETECTOR) (SHOULD JUST RETURN BOUNDING BOXES)
     detections = Col_detect.applyColorDectector(frame)
+    print (detections)
     rects = []
 
-    for i in range(0, detections.shape[2]):
-        if detections[0,0,i,2] > confidence:
+    for i in range(0, len(detections)):
+        if detections[i] > confidence:
 
-            box = detections[0,0,i, 3:7] * np.array([W,H,W,H])
-            rects.append(box.astype("int"))
+            #box = detections[0,0,i, 3:7] * np.array([W,H,W,H])
+            #rects.append(box.astype("int"))
 
-            (startX, startY, endX, endY) = box.astype("int")
+            (startX, startY, endX, endY, _) = detections[i]
             cv2.rectangle(frame, (startX,startY), (endX, endY), (0,255,0), 2)
 
     objects = ct.update(rects)
