@@ -58,7 +58,7 @@ while True:
             cv2.rectangle(crop_img, (startX,startY), (startX+endX, startY+endY), (0,255,0), 2)
             i +=1
 
-    rects = detections
+    rects = detections      
     print("1:Recs: " + str(len(rects)))
     
         

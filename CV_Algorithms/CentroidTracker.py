@@ -52,11 +52,16 @@ class centroidTracker():
             #print("objectcentroids: " + str(objectcentroids))
 
             D = dist.cdist(np.array(objectcentroids), inputCentroids)
+            #D = np.array(dist.cdist(np.array(objectcentroids), inputCentroids))
             #print("D: " + str(len(D)))
 
             rows = D.min(axis=1).argsort()
+            #row_temp = np.min(D, axis=1)
+            #rows = np.argsort(row_temp)
+            #rows = np.argsort(D, axis=1)
             #print("Rows: " + str(rows))
 
+            #cols = np.argmin(D, axis=1)[rows]
             cols = D.argmin(axis=1)[rows]
             #print("cols: " + str(cols))
 
