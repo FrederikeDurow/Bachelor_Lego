@@ -150,7 +150,7 @@ class multi_color_dectector():
     
 
 # ---- HOW TO USE -----
-videofeed = cv2.VideoCapture("/home/rasmus/Desktop/Test Videos/Test/07-04/Big Springs/100-Correct-Laps.mp4")
+videofeed = cv2.VideoCapture("/home/rasmus/Desktop/Test Videos/Test/20-04/Side (2).mp4")
 time.sleep(2.0)
 
 #header = ['Lap Nr', 'Point 1', 'X', 'Y','w/2','h/2']

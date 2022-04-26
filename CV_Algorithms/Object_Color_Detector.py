@@ -1,4 +1,5 @@
 import cv2
+from cv2 import boundingRect
 import numpy as np
 import time
 
@@ -32,6 +33,7 @@ class obj_color_dectector():
         self.blue  = (255, 0, 0)
 
     def applyColorDectector(self, frame):
+        self.data_blue.clear()
         self.frame = frame
         hsvFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
 
@@ -63,6 +65,7 @@ class obj_color_dectector():
         
         for c in self.countours_blue:
             x,y,w,h = cv2.boundingRect(c)
-            area = (x+w)*(y+h)
+            area = (w)*(h)
             bounding_blue = [x,y,w,h,area]
-            return bounding_blue
+            self.data_blue.append(bounding_blue)
+        return self.data_blue
