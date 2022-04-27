@@ -32,7 +32,7 @@ class obj_color_dectector():
         self.green = (0, 255, 0)
         self.blue  = (255, 0, 0)
 
-    def applyColorDectector(self, frame):
+    def applyColorDectector(self, frame, size):
         self.data_blue.clear()
         self.frame = frame
         hsvFrame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
@@ -67,5 +67,6 @@ class obj_color_dectector():
             x,y,w,h = cv2.boundingRect(c)
             area = (w)*(h)
             bounding_blue = [x,y,w,h,area]
-            self.data_blue.append(bounding_blue)
+            if area > size:
+                self.data_blue.append(bounding_blue)
         return self.data_blue

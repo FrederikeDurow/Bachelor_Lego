@@ -1,5 +1,5 @@
 import CentroidTracker
-#from imutils.video import VideoStream
+#from imutils.video import FileVideoStream
 import numpy as np
 import cv2
 import time
@@ -18,6 +18,7 @@ print("[INFO] starting video stream...")
 #"/home/rasmus/Desktop/Test Videos/Test/20-04/Sideblocked (2).mp4"
 #output  =cv2.VideoWriter("Object_tracker_2.avi", cv2.VideoWriter_fourcc(*'MPEG'), 100, (1456,1088))
 vs = cv2.VideoCapture("/home/rasmus/Desktop/Test Videos/Test/20-04/Sideblocked (2).mp4")
+#vs = FileVideoStream("/home/rasmus/Desktop/Test Videos/Test/20-04/Sideblocked (2).mp4")
 time.sleep(2.0)
 
 ret, init_frame = vs.read()
@@ -44,7 +45,7 @@ while True:
      #   (H, W) = frame.shape[:2]
 
     # SHOULD BE OUR OWN DETECTOR (MAYBE COLOR DETECTOR) (SHOULD JUST RETURN BOUNDING BOXES)
-    detections = Col_detect.applyColorDectector(crop_img)
+    detections = Col_detect.applyColorDectector(crop_img, 200)
     print (detections)
     rects = []
     if  detections is not None:
