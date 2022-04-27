@@ -65,7 +65,8 @@ def check_robot_mode(connected_UR):
 
     return robot_dash
 
-def loadURscript (connected_UR, urp_file):
+def loadURscript (connected_UR, ):
+    urp_file = str(input("[WAIT USER] Enter the name of the .urp script file "))
     robot_dash = connected_UR
     script_file = str(urp_file)+'.urp' 
 
