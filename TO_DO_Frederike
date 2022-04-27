@@ -1,0 +1,20 @@
+Matcher_Node 
+- Subscribe til roi og data info indtil recieved, så cancle subscription 
+- Kør bb med roi info
+- Kør corner detection på det
+- Send data ud 
+- send data til robot og få npget tilbage
+
+
+Tracker_Node
+- get video stream
+
+
+GUI_Node
+- Subscribe til video 
+- Få bruger til at vælg rois på video 
+- få bruger til at vælg data 
+- Start processen 
+	- send roi og output data
+	- sig start til robotten??
+

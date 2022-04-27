@@ -3,40 +3,38 @@ import rospy
 import cv2
 import numpy as np
 from sensor_msgs.msg import Image
+from std_msgs.msg import String
 from cv_bridge import CvBridge, CvBridgeError
 
-
-class video_saver:
+class setup:
 
     def __init__(self):
-        self.cvimg = None
-        self.sub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.callback)
-        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-        self.out = cv2.VideoWriter('ny.mp4', fourcc, 100.0, (1440,1080), 0)
+        self.pub = rospy.Publisher('NrOfRois', String, queue_size=self.nrOfRois)
+        rospy.init_node('setup', anonymous=True)
+        rate = rospy.Rate(10) #10Hz
+        
+        while not rospy.is_shutdown():
+            hello_str = "hello world %s" % rospy.get_time()
+            rospy.loginfo(hello_str)
+            self.pub.publish(hello_str)
+            rate.sleep()
 
-    def callback(self, data):
+    def callback(self):
         bridge = CvBridge()
         rospy.loginfo(rospy.get_caller_id() + "Camera Image recieved")
         try:
             self.cvimg = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')       
         except CvBridgeError as e:
             print(e)
-            
-        self.cv_show()
-        self.save_video()
+    
+    def publish_data(self):
+        return 0
 
-    def cv_show(self):
-        cv2.imshow("cv image", self.cvimg)
-        cv2.waitKey(10)
-
-   
-
-        
 def main():
-    rospy.init_node('stream', anonymous=True)
-    sub = video_saver()
-    rospy.spin()
-    sub.stream_closed()
+    m = setup(10)
     
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass
