@@ -12,6 +12,8 @@ GridView {
 
     width: 544
     height: 520
+    property string property0: "none.none"
+    layer.enabled: false
     layoutDirection: Qt.LeftToRight
     preferredHighlightEnd: 100
 
@@ -37,7 +39,7 @@ GridView {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.75}
+    D{i:0;height:520;width:544}
 }
 ##^##*/
 

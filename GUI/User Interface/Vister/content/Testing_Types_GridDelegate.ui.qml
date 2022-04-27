@@ -19,9 +19,9 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        font.family: Constants.largeFont.family
         text: name
         anchors.margins: 24
+        font.family: "Roboto"
         font.pointSize: 8
         anchors.horizontalCenterOffset: 0
         anchors.topMargin: 111
@@ -88,3 +88,4 @@ Designer {
     D{i:0;formeditorZoom:3}
 }
 ##^##*/
+

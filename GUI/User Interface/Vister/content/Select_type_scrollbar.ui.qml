@@ -42,11 +42,11 @@ Slider {
     states: [
         State {
             name: "normal"
-            when: !control.pressed
+            when: !slider.pressed
         },
         State {
             name: "pressed"
-            when: control.pressed
+            when: slider.pressed
         }
     ]
 }
