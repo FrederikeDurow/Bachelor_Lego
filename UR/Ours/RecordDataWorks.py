@@ -1,7 +1,10 @@
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
+from os.path import exists
 import time
 import argparse
 import sys
+import cv2
+
 
 
 def parse_args(args):
@@ -72,8 +75,55 @@ def main(args):
 
     except KeyboardInterrupt:
         rtde_r.stopFileRecording()
-        print("\nData recording stopped.")
+        print("\n[MSG] Data recording stopped.")
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
+
+
+
+
+
+
+
+
+def record_data(counter, frequency):
+    #args = parse_args(args)
+    dt = 1 / frequency
+    start = time.time()
+    if counter % 10 == 0:
+        sys.stdout.write("\r")
+        sys.stdout.write("{:3d} samples.".format(counter))
+        sys.stdout.flush()
+    end = time.time()
+    duration = end - start
+    if duration < dt:
+        time.sleep(dt - duration)
+    counter += 1
+
+def data_to_output():
+
+    data_output = []
+
+    print("[INFO] See the guide from Vister for the naming of each avaible data \n")
+    time.sleep(2.0)
+    print("[INFO] Select the .txt with the data to be stored in it \n")
+    while True:
+        file = input('[WAIT USER] Enter the full path to the data output settings: ')
+        if exists(file):
+            data_to_be_stored = open(file, encoding='utf-8')
+            break
+        else:
+            print("[MSG] Could not find file")
+            time.sleep(2.0)
+    
+    print("[MSG] Data setting file was succesfully read!")
+    data_output.append(data_to_be_stored)
+    print(data_output)
+    k = input('[WAIT USER] Enter the whished name for the CSV file: ')
+    csv_file = str(k)+".csv"
+
+    return data_output, csv_file
