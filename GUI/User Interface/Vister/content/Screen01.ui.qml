@@ -114,6 +114,38 @@ Rectangle {
                 anchors.leftMargin: 50
             }
         }
+
+        Row {
+            id: row1
+            x: 1687
+            y: 0
+            width: 133
+            height: 36
+            rightPadding: 21
+            topPadding: 8
+            spacing: 16
+            layoutDirection: Qt.RightToLeft
+
+            Image {
+                id: dell
+                width: 19
+                source: "images/Dell.png"
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Image {
+                id: out
+                source: "images/Out.png"
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Image {
+                id: creditcard
+                y: 10
+                source: "images/Credit card.png"
+                fillMode: Image.PreserveAspectFit
+            }
+        }
     }
 
     Text {
@@ -156,16 +188,6 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
     }
 
-    Rectangle {
-        id: rectangle2
-        x: 0
-        y: 112
-        width: 100
-        height: 968
-        color: "#161c28"
-        border.color: "#161c28"
-        border.width: 0
-    }
 
     Rectangle {
         id: rectangle1
@@ -182,10 +204,73 @@ Rectangle {
         x: 273
         y: 121
     }
+
+    Rectangle {
+        id: rectangle2
+        x: 0
+        y: 112
+        width: 100
+        height: 968
+        color: "#161c28"
+        border.color: "#161c28"
+        border.width: 0
+    }
+
+    Column {
+        id: column
+        x: 0
+        y: 112
+        width: 100
+        height: 935
+        topPadding: 200
+        rightPadding: 30
+        leftPadding: 33
+        spacing: 80
+
+
+
+
+
+        Image {
+            id: home_light
+            source: "../../Components/Base/Home_light.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        Image {
+            id: filter1
+            y: 399
+            source: "../../Components/Base/Filter-1.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        Image {
+            id: stop_and_play_light
+            source: "../../Components/Base/Stop_and_play_light.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
+
+        Image {
+            id: desk_alt_light
+            source: "../../Components/Base/Desk_alt_light.png"
+            fillMode: Image.PreserveAspectFit
+        }
+    }
+
+    Image {
+        id: info_fill
+        x: 39
+        y: 991
+        width: 23
+        height: 23
+        source: "images/Info_fill.png"
+        fillMode: Image.PreserveAspectFit
+    }
 }
 
 /*##^##
 Designer {
-    D{i:0;height:1080;width:1920}
+    D{i:0;formeditorZoom:0.5;height:1080;width:1920}
 }
 ##^##*/
