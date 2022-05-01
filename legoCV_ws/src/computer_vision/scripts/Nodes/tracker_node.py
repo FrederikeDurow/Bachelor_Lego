@@ -24,7 +24,7 @@ class tracker:
             self.pub.publish(hello_str)
             rate.sleep()
 
-    def callback(self):
+    def callback(self, data):
         bridge = CvBridge()
         rospy.loginfo(rospy.get_caller_id() + "Camera Image recieved")
         try:

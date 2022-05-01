@@ -1,3 +1,4 @@
+from matplotlib.style import available
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 from os.path import exists
 import time
@@ -103,25 +104,58 @@ def record_data(counter, frequency):
     if duration < dt:
         time.sleep(dt - duration)
     counter += 1
+    return counter
+
+#def data_to_output():
+#
+#    available_data = ['timestamp','actual_TCP_pose','actual_TCP_force']
+#    data_output = []
+#
+#    print("[INFO] See the guide from Vister for the enabling of wanted data \n")
+#    time.sleep(2.0)
+#    print("[INFO] Select the .txt with the data to be stored in it \n")
+#    while True:
+#        file = input('[WAIT USER] Enter the full path to the data output settings: ')
+#        if exists(file):
+#            data_to_be_stored = open(file, encoding='utf-8').read()
+#            break
+#        else:
+#            print("[MSG] Could not find file")
+#            time.sleep(2.0)
+#    
+#    print("[MSG] Data setting file was succesfully read!")
+#    data_output.append(data_to_be_stored)
+#    print(data_output)
+#    k = input('[WAIT USER] Enter the whished name for the CSV file: ')
+#    csv_file = str(k)+".csv"
+#
+#    return data_output, csv_file
 
 def data_to_output():
-
+    
+    available_data = ['timestamp','actual_TCP_pose','actual_TCP_force']
     data_output = []
 
-    print("[INFO] See the guide from Vister for the naming of each avaible data \n")
+    #print("[INFO] See the guide from Vister for the enabling of wanted data \n")
+    print("Data that can be stored: " + str(available_data))
     time.sleep(2.0)
-    print("[INFO] Select the .txt with the data to be stored in it \n")
     while True:
-        file = input('[WAIT USER] Enter the full path to the data output settings: ')
-        if exists(file):
-            data_to_be_stored = open(file, encoding='utf-8')
+        file = str(input('Enter 1 for enable and 0 for uenable of data: '))
+        if len(file) == len(available_data):
+            data_to_be_stored = file
             break
         else:
-            print("[MSG] Could not find file")
+            print("[MSG] The input doesn't match the requriement or size of available_data")
             time.sleep(2.0)
+
+    checker = 0
+    for i in available_data:
+        if data_to_be_stored[checker] == '1':
+            data_output.append(available_data[checker])
+        checker +=1
     
-    print("[MSG] Data setting file was succesfully read!")
-    data_output.append(data_to_be_stored)
+    print("[MSG] Data to be saved was succesfully set!")
+    #data_output.append(data_to_be_stored)
     print(data_output)
     k = input('[WAIT USER] Enter the whished name for the CSV file: ')
     csv_file = str(k)+".csv"
