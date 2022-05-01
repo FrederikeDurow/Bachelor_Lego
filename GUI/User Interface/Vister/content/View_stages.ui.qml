@@ -48,6 +48,12 @@ Item {
                 anchors.centerIn: parent
                 font: Constants.largeFont
             }
+
+            SETUP_VIEWS {
+                id: sETUP_VIEWS
+                x: 0
+                y: 0
+            }
         }
 
         Item {
