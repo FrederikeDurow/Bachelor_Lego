@@ -7,6 +7,8 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 from Classes import ROIs
+from computer_vision.msg import ProjectInfo
+from computer_vision.msg import RoiList
 
 class ProjectSetup:
 
@@ -20,10 +22,14 @@ class ProjectSetup:
 
         #Initializations for Test Info
         self.testType = None
-        self.nrOfLaps = None
-
+        self.nrOfLaps = 0
+        self.fileName = None
+        self.rois = []
         #Initializations for Regions of Interest
         self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
+
+        #Initialization of message
+        self.msg = None
         
 
     def callback(self,data):
@@ -55,19 +61,49 @@ class ProjectSetup:
                 self.testType = "MotionTrackingInfo"
                 break
 
+
+    def set_test_info(self):
+        self.set_test_type()
+        self.set_laps()
+        self.set_rois()
+        self.set_file_name()
+
     def get_test_type(self):
         return self.testType
 
     def set_laps(self):
-        print("Please enter number of laps followed by pressing enter.")
+        print("Please enter number of laps, followed by pressing enter.")
         self.nrOfLaps = input()
-        print(self.nrOfLaps)
 
     def get_laps(self):
         return self.nrOfLaps
     
     def set_rois(self):
         self.newRois.set_rois()
+        self.rois = self.newRois.get_rois()
 
     def get_rois(self):
         return self.newRois.get_rois()
+    
+    def set_file_name(self):
+        print("Please enter the output file name, followed by pressing enter:")
+        self.fileName = input()
+
+    def create_message(self):
+        info = ProjectInfo()
+        info.FileName = self.fileName
+        info.Lap = int(self.nrOfLaps)
+        for i in range(len(self.rois)):
+            rList = RoiList() 
+            rList.RoiInfo = self.rois[i]
+            info.Rois.append(rList)
+        self.msg = info
+        print(self.msg)
+    
+    def publish_info(self):
+        pub = rospy.Publisher(self.testType, ProjectInfo)
+        rate = rospy.Rate(10) #10Hz
+        #rospy.loginfo("Setup Node is publishing project information now")
+        while not rospy.is_shutdown():
+            pub.publish(self.msg)
+            rate.sleep()

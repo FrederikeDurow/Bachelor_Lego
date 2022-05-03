@@ -1,0 +1,13 @@
+ Program
+   BeforeStart
+     Home
+   Robot Program
+     MoveJ
+       Wait DI[0]=HI
+       object_1
+       idle
+       object_2
+       idle2
+       object_3
+       idle3
+       Set DO[0]=On

@@ -1,0 +1,7 @@
+ Program
+   Robot Program
+     MoveJ
+       Waypoint_3
+     MoveJ
+       Waypoint_1
+       Waypoint_2

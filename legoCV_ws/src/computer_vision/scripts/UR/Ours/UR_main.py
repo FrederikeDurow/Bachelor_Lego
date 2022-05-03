@@ -1,7 +1,6 @@
 # import Ours.UR_Csv_Writer as UR_csv_writer
 import sys
-#sys.path.insert(0, '/home/rasmus/Bachelor/Bachelor_Lego/UR')
-sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts/UR')
+sys.path.insert(0, '/home/rasmus/Bachelor/Bachelor_Lego/UR')
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import rtde_io
 from Ours import PlayURPWorks as PURP

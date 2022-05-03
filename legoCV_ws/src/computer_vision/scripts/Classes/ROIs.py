@@ -57,7 +57,6 @@ class ROIs:
 
 
     def draw_rois(self, image):
-        image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
         if len(self.temp_roi) > 0:
             cv2.circle(image, (self.temp_roi[0],self.temp_roi[1]), 2, (0,255,0), -1)
         for roi in self.rois:
