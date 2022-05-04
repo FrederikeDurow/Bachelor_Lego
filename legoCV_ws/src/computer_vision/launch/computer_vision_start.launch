@@ -1,11 +1,13 @@
 <launch>
 
-    <node pkg="computer_vision" type="video_saver_node.py" name="video_saver" />
+    <node pkg="computer_vision" type="project_setup_node.py" name="ProjectSetup" />
+    
+    <node pkg="computer_vision" type="activation_node.py" name="ActivationTest" />
 
-    <node pkg="computer_vision" type="matcher_node.py" name="matcher" />
+    <node pkg="computer_vision" type="ur_node.py" name="UR" />
 
-    <node pkg="computer_vision" type="tracker_node.py" name="tracker" />
+    <node pkg="computer_vision" type="tracker_node.py" name="MotionTracker" />
 
-    <node pkg="computer_vision" type="data_node.py" name="data_collector" />
+    <node pkg="computer_vision" type="video_saver.py" name="VideoSaver" />
 
 </launch>

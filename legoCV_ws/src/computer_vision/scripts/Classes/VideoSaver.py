@@ -8,19 +8,19 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class VideoSaver:
 
-    def __init__(self):
+    def __init__(self, fileName):
         self.cvimg = None
         self.testStatus = "Waiting"
 
-        #Create subscriber to Test Nodes
-        self.nodeSub = rospy.Subscriber("LegoTestStatus", String, self.nodeCallback)
+        # #Create subscriber to Test Nodes
+        # self.nodeSub = rospy.Subscriber("LegoTestStatus", String, self.nodeCallback)
 
         #Create subscriber to Camera
         self.camSub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.camCallback)
 
         #Create Video Writer
         fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-        self.out = cv2.VideoWriter('ny.mp4', fourcc, 100.0, (1440,1080), 0)
+        self.out = cv2.VideoWriter(fileName+'.mp4', fourcc, 100.0, (1440,1080), 0)
 
     def nodeCallback(self, data):
         if data == "Start":
@@ -58,14 +58,3 @@ class VideoSaver:
     
     def stream_closed(self):
         self.out.release()
-
-        
-def main():
-    rospy.init_node('stream', anonymous=True)
-    vs = VideoSaver()
-    rospy.spin()
-    #vs.stream_closed()
-    
-if __name__ == '__main__':
-    main()
-

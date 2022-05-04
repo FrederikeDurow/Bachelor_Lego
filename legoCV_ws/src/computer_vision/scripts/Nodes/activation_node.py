@@ -14,6 +14,7 @@ from cv_bridge import CvBridge, CvBridgeError
 sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 from Classes import BoundingBox 
 from Classes import DataFile
+from Classes import VideoSaver
 
 class ActivationTest:
     
@@ -82,8 +83,10 @@ class ActivationTest:
     def start_test(self):
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
+        self.VS = VideoSaver.VideoSaver(self.file_name)
+        self.VS.start_recording()
         self.get_control_data()
-        #self.process_control_data()
+        self.process_control_data()
         self.test_started = True                                             
         self.run_robot(True)
 
@@ -103,6 +106,7 @@ class ActivationTest:
             self.control_positions.append([control_data[bb][0], control_data[bb][1]])
             w_list.append(control_data[bb][2])
             h_list.append(control_data[bb][3])
+        print(self.control_positions)
         self.w_min = np.mean(w_list) - np.var(w_list)*2
         self.w_max = np.mean(w_list) + np.var(w_list)*2
         self.h_min = np.mean(h_list) - np.var(h_list)*2
@@ -110,11 +114,11 @@ class ActivationTest:
     
     def run_robot(self, request):
         #Create service to Robot
-        rospy.wait_for_service("RunNextLap")
-        self.rate = rospy.Rate(1)
-        roboService = rospy.ServiceProxy("RunNextLap", Robo)
-        roboService(request)
-        self.rate.sleep()
+        # rospy.wait_for_service("RunNextLap")
+        # self.rate = rospy.Rate(1)
+        # roboService = rospy.ServiceProxy("RunNextLap", Robo)
+        # roboService(request)
+        # self.rate.sleep()
         self.roboCallback()
 
     
@@ -189,7 +193,7 @@ class ActivationTest:
 
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
-        #save video 
+        self.VS.stop_recording()
         self.save_data()
         print("The test has been completed and the data is saved.")
         #Stop all subscriptions, publisher and windows
