@@ -33,11 +33,11 @@ Button {
         fillMode: Image.PreserveAspectFit
 
         Image {
-            id: rectangle739
+            id: hover
             x: 16
-            y: 13
+            y: 15
             visible: false
-            source: "images/Rectangle 739.png"
+            source: "images/Hover.png"
             fillMode: Image.PreserveAspectFit
         }
     }
@@ -65,26 +65,20 @@ Button {
             when: control.down
 
             PropertyChanges {
-                target: rectangle739
-                visible: true
-                rotation: -180
-            }
-
-            PropertyChanges {
                 target: control
                 hoverEnabled: true
                 clip: false
+            }
+
+            PropertyChanges {
+                target: hover
+                visible: true
+                rotation: -180
             }
         },
         State {
             name: "hover"
             when: control.hovered
-
-            PropertyChanges {
-                target: rectangle739
-                visible: true
-                rotation: 0
-            }
 
             PropertyChanges {
                 target: control
@@ -94,13 +88,18 @@ Button {
                 highlighted: false
                 clip: false
             }
+
+            PropertyChanges {
+                target: hover
+                visible: true
+            }
         }
     ]
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}
+    D{i:0;formeditorZoom:1.25;height:467;width:401}
 }
 ##^##*/
 

@@ -30,15 +30,15 @@ Button {
         y: -14
         source: "images/New_Project_Button.png"
         fillMode: Image.PreserveAspectFit
+    }
 
-        Image {
-            id: rectangle739
-            x: 16
-            y: 13
-            visible: false
-            source: "images/Rectangle 739.png"
-            fillMode: Image.PreserveAspectFit
-        }
+    Image {
+        id: hover
+        x: -1
+        y: 0
+        visible: false
+        source: "../../Components/Home Screen/Hover.png"
+        fillMode: Image.PreserveAspectFit
     }
 
     states: [
@@ -64,7 +64,7 @@ Button {
             }
 
             PropertyChanges {
-                target: rectangle739
+                target: hover
                 visible: true
                 rotation: -180
             }
@@ -83,7 +83,7 @@ Button {
             }
 
             PropertyChanges {
-                target: rectangle739
+                target: hover
                 visible: true
             }
         }
@@ -92,7 +92,7 @@ Button {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}
+    D{i:0;formeditorZoom:1.1;height:467;width:401}
 }
 ##^##*/
 

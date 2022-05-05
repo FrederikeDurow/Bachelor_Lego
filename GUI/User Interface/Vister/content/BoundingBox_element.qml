@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Item {
-    id: item1
+    id: instance_bounding_box
     width: 400
     height: 45
     property alias text1Text: text1.text

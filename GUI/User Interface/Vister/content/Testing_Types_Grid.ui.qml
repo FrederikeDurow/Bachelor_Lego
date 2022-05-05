@@ -12,6 +12,7 @@ GridView {
 
     width: 544
     height: 520
+    interactive: false
     property string property0: "none.none"
     layer.enabled: false
     layoutDirection: Qt.LeftToRight
@@ -34,12 +35,14 @@ GridView {
         border.width: 8
     }
 
-    delegate: Testing_Types_GridDelegate {}
+    delegate: Testing_Types_GridDelegate {
+        id: testing_Types_GridDelegate
+    }
 }
 
 /*##^##
 Designer {
-    D{i:0;height:520;width:544}
+    D{i:0;height:0;width:0}
 }
 ##^##*/
 

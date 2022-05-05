@@ -17,6 +17,11 @@ Item {
         y: 44
         width: 1313
         height: 687
+
+        MouseArea {
+            id: draw_area
+            anchors.fill: parent
+        }
     }
 
     Play_button {
@@ -55,10 +60,9 @@ Item {
             width: 935
             height: 82
 
-
             Image {
                 id: rectangle3171
-                x: -19
+                x: -25
                 y: -16
                 source: "../../Components/Setup_views/Rectangle 317.png"
                 fillMode: Image.PreserveAspectFit
@@ -66,17 +70,17 @@ Item {
 
             ToolButton {
                 id: toolButton
-                x: 16
+                x: -9
                 y: -3
-                width: 69
+                width: 110
                 height: 88
                 text: qsTr("")
                 display: AbstractButton.IconOnly
 
                 Image {
                     id: arrow_top_long_light
-                    x: 5
-                    y: 11
+                    x: 24
+                    y: 14
                     source: "../../Components/Setup_views/Arrow_top_long_light.png"
                     fillMode: Image.PreserveAspectFit
                 }
@@ -84,39 +88,45 @@ Item {
 
             ToolSeparator {
                 id: toolSeparator
-                x: 101
+                x: 95
                 y: 24
+                width: 14
+                height: 36
             }
 
             ToolButton {
-                id: toolButton1
-                x: 127
-                y: -3
-                width: 69
-                height: 88
-                text: qsTr("")
-
                 Image {
                     id: move_alt_alt
-                    x: 6
-                    y: 14
+                    x: 27
+                    y: 16
                     source: "../../Components/Setup_views/Move_alt_alt.png"
                     fillMode: Image.PreserveAspectFit
                 }
+                id: toolButton1
+                x: 103
+                y: -3
+                width: 110
+                height: 88
+                text: qsTr("")
+                flat: true
+
+
                 display: AbstractButton.IconOnly
             }
 
             ToolSeparator {
                 id: toolSeparator1
-                x: 212
+                x: 207
                 y: 24
+                width: 14
+                height: 36
             }
 
             ToolButton {
                 id: toolButton2
-                x: 239
+                x: 215
                 y: -3
-                width: 69
+                width: 110
                 height: 88
                 visible: true
                 text: qsTr("")
@@ -124,10 +134,11 @@ Item {
                 flat: false
                 display: AbstractButton.IconOnly
 
+
                 Image {
                     id: search_alt_light
-                    x: 10
-                    y: 15
+                    x: 29
+                    y: 18
                     source: "../../Components/Setup_views/Search_alt_light.png"
                     fillMode: Image.PreserveAspectFit
                 }
@@ -135,23 +146,25 @@ Item {
 
             ToolSeparator {
                 id: toolSeparator2
-                x: 709
+                x: 702
                 y: 24
+                width: 14
+                height: 36
             }
 
             ToolButton {
                 id: toolButton3
-                x: 736
+                x: 709
                 y: -3
-                width: 69
+                width: 110
                 height: 88
                 text: qsTr("")
                 display: AbstractButton.IconOnly
 
                 Image {
                     id: img_box_light
-                    x: 6
-                    y: 12
+                    x: 26
+                    y: 15
                     source: "../../Components/Setup_views/Img_box_light.png"
                     fillMode: Image.PreserveAspectFit
                 }
@@ -159,24 +172,26 @@ Item {
 
             ToolSeparator {
                 id: toolSeparator3
-                x: 820
+                x: 813
                 y: 24
+                width: 14
+                height: 36
             }
 
 
             ToolButton {
                 id: toolButton4
-                x: 847
+                x: 821
                 y: -3
-                width: 69
+                width: 110
                 height: 88
                 text: qsTr("")
                 display: AbstractButton.IconOnly
 
                 Image {
                     id: gps_fixed_light
-                    x: 7
-                    y: 13
+                    x: 27
+                    y: 16
                     source: "../../Components/Setup_views/Gps_fixed_light.png"
                     fillMode: Image.PreserveAspectFit
                 }
@@ -186,25 +201,8 @@ Item {
         }
     }
 
-    Image {
-        id: rectangle270
-        x: 118
-        y: 229
-        source: "../../Components/Setup_views/Rectangle 270.png"
-        fillMode: Image.PreserveAspectFit
 
-        BoundingBox_element {
-            id: boundingBox_element
-            x: 18
-            y: 14
-        }
 
-        TrackingPoint {
-            id: trackingPoint
-            x: 18
-            y: 65
-        }
-    }
 
 
 
@@ -273,10 +271,106 @@ Item {
         source: "../../Components/Setup_views/Group 1750.png"
         fillMode: Image.PreserveAspectFit
     }
+
+    Image {
+        id: rectangle470
+        x: 118
+        y: 228
+        source: "../../Components/Rectangle 470.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+    Image {
+        id: rectangle472
+        x: 118
+        y: 639
+        source: "../../Components/Rectangle 470.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+    TrackingPoint {
+        id: trackingPoint
+        x: 137
+        y: 652
+    }
+
+
+
+
+    ListView {
+        id: listView_boundingbox
+        x: 134
+        y: 242
+        width: 405
+        height: 399
+        clip: true
+        cacheBuffer: 80
+        delegate: Item{
+            x: 5
+            width: 80
+            height: 40
+            Row {
+                id: row1
+                spacing: 10
+                Rectangle {
+                    width: 40
+                    height: 40
+                    color: colorCode
+                }
+
+                /*
+                Component.onCompleted: {
+                         var component = Qt.createComponent("BoundingBox_element.qml");
+                         for (var i=0; i<5; i++) {
+                             var object = component.createObject(container);
+                             object.x = (object.width + 10) * i;
+                         }
+                     }
+                      */
+
+                Text {
+                    text: name
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.bold: true
+                }
+
+            }
+
+        }
+        model: ListModel {
+            ListElement {
+                name: "Object 1"
+                colorCode: "grey"
+            }
+
+            ListElement {
+                name: "Object 2"
+                colorCode: "red"
+            }
+
+            ListElement {
+                name: "Object 3"
+                colorCode: "blue"
+            }
+
+            ListElement {
+                name: "Object 4"
+                colorCode: "green"
+            }
+        }
+
+        BoundingBox_element {
+            id: boundingBox_element
+            x: 538
+            y: 71
+        }
+    }
 }
+
+
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.66}D{i:12}D{i:14}
+    D{i:0;formeditorZoom:0.9}D{i:31}
 }
 ##^##*/

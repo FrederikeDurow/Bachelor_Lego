@@ -91,7 +91,6 @@ Item {
         x: 672
         y: 214
         color: "#ffffff"
-        text: testing_Types_Grid.footerItem.objectName
         font.pixelSize: 40
     }
 
@@ -121,7 +120,7 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.66}
+    D{i:0;formeditorZoom:0.66;height:815;width:1125}
 }
 ##^##*/
 

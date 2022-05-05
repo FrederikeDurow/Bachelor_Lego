@@ -1,10 +1,11 @@
+
+
 /*
 This is a UI file (.ui.qml) that is intended to be edited in Qt Design Studio only.
 It is supposed to be strictly declarative and only uses a subset of QML. If you edit
 this file manually, you might introduce QML code that is not supported by Qt Design Studio.
 Check out https://doc.qt.io/qtcreator/creator-quick-ui-forms.html for details on .ui.qml files.
 */
-
 import QtQuick
 import QtQuick.Controls
 import Vister
@@ -19,30 +20,6 @@ Rectangle {
     border.width: 0
     transformOrigin: Item.Center
 
-    Image {
-        id: edit_dropdown
-        x: 0
-        y: 0
-        source: "C:/Users/rasm4/OneDrive/Dokumenter/Test/Edit_dropdown.svg"
-        fillMode: Image.PreserveAspectFit
-    }
-
-    Image {
-        id: load_Project_Button
-        x: 0
-        y: 0
-        source: "C:/Users/rasm4/OneDrive/Dokumenter/Test/Load_Project_Button.svg"
-        fillMode: Image.PreserveAspectFit
-    }
-
-    Image {
-        id: load_Project_Button1
-        x: 265
-        y: 215
-        source: "images/Load_Project_Button.svg"
-        fillMode: Image.PreserveAspectFit
-    }
-
     Rectangle {
         id: rectangle
         x: 0
@@ -54,113 +31,170 @@ Rectangle {
     }
 
     Rectangle {
-        id: toolbar
+        id: rectangle3
         x: 100
         y: 0
         width: 1820
         height: 36
         color: "#161c28"
         border.width: 0
-        antialiasing: true
 
-        Row {
-            id: row
-            width: 495
-            height: 36
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            spacing: 40
-            padding: 40
-            topPadding: 0
-            anchors.leftMargin: 0
+        Fullscreen_btn {
+            id: fullscreen_btn
+            x: 1748
+            y: 0
+        }
 
-            Text {
-                id: file_toolbar
-                color: "#ffffff"
-                text: qsTr("File")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                font.pixelSize: 16
-                anchors.leftMargin: 50
+        Minimizescreen_btn {
+            id: minimizescreen_btn
+            x: 1712
+            y: 0
+        }
+    }
+
+    MenuBar {
+        id: menuBar
+        x: 100
+        y: 0
+        width: 359
+        height: 36
+
+        Menu {
+            title: qsTr("File")
+            id: file
+            Action {
+                id: newprojectAction
+                text: qsTr("&New project")
+                shortcut: StandardKey.New
+            }
+            Action {
+                id: loadprojectAction
+                text: qsTr("&Load project")
+                shortcut: StandardKey.Open
+            }
+            Action {
+                id: saveAction
+                text: qsTr("&Save File")
+                shortcut: StandardKey.Save
+            }
+            Action {
+                id: saveasAction
+                text: qsTr("&Save As...")
+                shortcut: StandardKey.SaveAs
+            }
+        }
+        Menu {
+            title: qsTr("Edit")
+            id: edit
+            Action {
+                id: undoAction
+                text: qsTr("&Undo")
+                shortcut: StandardKey.Undo
             }
 
-            Text {
-                id: edit_toolbar
-                color: "#ffffff"
-                text: qsTr("Edit")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: file_toolbar.right
-                font.pixelSize: 16
-                anchors.leftMargin: 50
+            Action {
+                id: redoAction
+                text: qsTr("&Redo")
             }
-
-            Text {
-                id: view_toolbar
-                color: "#ffffff"
-                text: qsTr("View")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: edit_toolbar.right
-                font.pixelSize: 16
-                anchors.leftMargin: 50
+            Action {
+                id: cutAction
+                text: qsTr("&Cut")
+                shortcut: StandardKey.Cut
             }
-
-            Text {
-                id: help_toolbar
-                color: "#ffffff"
-                text: qsTr("Help")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: view_toolbar.right
-                font.pixelSize: 16
-                anchors.leftMargin: 50
+            Action {
+                id: copyAction
+                text: qsTr("&Copy")
+                shortcut: StandardKey.Copy
+            }
+            Action {
+                id: pasteAction
+                text: qsTr("&Paste")
+                shortcut: StandardKey.Paste
+            }
+        }
+        Menu {
+            title: qsTr("View")
+            id: view
+            Action {
+                id: zoominAction
+                text: qsTr("&Zoom in")
+                shortcut: StandardKey.ZoomIn
+            }
+            Action {
+                id: zoomoutAction
+                text: qsTr("&Zoom out")
+                shortcut: StandardKey.ZoomOut
+            }
+            Menu {
+                title: qsTr("Hide Objects")
+                Action {
+                    text: qsTr("Bounding Box")
+                    checkable: true
+                    checked: true
+                }
+                Action {
+                    text: qsTr("Point Tracker")
+                    checkable: true
+                    checked: true
+                }
+            }
+        }
+        Menu {
+            title: qsTr("Help")
+            id: help
+            Action {
+                id: quickGuideAction
+                text: qsTr("Quick Guide")
+            }
+            Action {
+                id: documentationAction
+                text: qsTr("Documentation")
             }
         }
 
-        Row {
-            id: row1
-            x: 1687
-            y: 0
-            width: 133
-            height: 36
-            rightPadding: 21
-            topPadding: 8
-            spacing: 16
-            layoutDirection: Qt.RightToLeft
+        delegate: MenuBarItem {
+            id: menuBarItem
+            leftPadding: 20
+            font.pointSize: 12
 
-            Image {
-                id: dell
-                width: 19
-                source: "images/Dell.png"
-                fillMode: Image.PreserveAspectFit
+            contentItem: Text {
+                text: menuBarItem.text
+                font.family: "Roboto"
+                opacity: enabled ? 1.0 : 0.3
+                color: menuBarItem.highlighted ? "#ffffff" : "#ffffff"
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
             }
 
-            Image {
-                id: out
-                source: "images/Out.png"
-                fillMode: Image.PreserveAspectFit
+            background: Rectangle {
+                implicitWidth: 40
+                implicitHeight: 40
+                opacity: enabled ? 1 : 0.3
+                color: menuBarItem.highlighted ? "#707c8d" : "transparent"
             }
+        }
 
-            Image {
-                id: creditcard
-                y: 10
-                source: "images/Credit card.png"
-                fillMode: Image.PreserveAspectFit
-            }
+        background: Rectangle {
+            implicitWidth: 40
+            implicitHeight: 40
+            color: "#161c28"
         }
     }
 
     Text {
         id: v_text
         x: 34
-        y: 56
+        y: 63
         width: 32
         height: 19
-        text: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Uni Sans'; font-size:12pt; font-weight:700;\">V</span></p></body></html>"
+        text: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Roboto'; font-size:10pt;\">V</span></p></body></html>"
         horizontalAlignment: Text.AlignHCenter
         lineHeight: 0.3
         textFormat: Text.RichText
-        font.pointSize: 12
+        font.pointSize: 10
         font.weight: Font.Normal
-        font.family: "Arial"
+        font.family: "roboto"
     }
 
     Text {
@@ -169,14 +203,14 @@ Rectangle {
         y: 81
         width: 32
         height: 24
-        text: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Poppins'; font-size:12pt;\">1.0</span></p></body></html>"
+        text: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Roboto'; font-size:10pt;\">1.0</span></p></body></html>"
         horizontalAlignment: Text.AlignHCenter
         lineHeight: 0.3
         font.styleName: "#000000"
         textFormat: Text.RichText
         font.pointSize: 12
         font.weight: Font.Bold
-        font.family: "Arial"
+        font.family: " Roboto"
     }
 
     Image {
@@ -188,7 +222,6 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
     }
 
-
     Rectangle {
         id: rectangle1
         x: 1901
@@ -197,12 +230,6 @@ Rectangle {
         height: 1044
         color: "#252d3a"
         border.width: 0
-    }
-
-    GroupItem {
-        id: groupItem
-        x: 273
-        y: 121
     }
 
     Rectangle {
@@ -227,10 +254,6 @@ Rectangle {
         leftPadding: 33
         spacing: 80
 
-
-
-
-
         Image {
             id: home_light
             source: "../../Components/Base/Home_light.png"
@@ -250,7 +273,6 @@ Rectangle {
             fillMode: Image.PreserveAspectFit
         }
 
-
         Image {
             id: desk_alt_light
             source: "../../Components/Base/Desk_alt_light.png"
@@ -267,6 +289,80 @@ Rectangle {
         source: "images/Info_fill.png"
         fillMode: Image.PreserveAspectFit
     }
+
+    ToolBar {
+        x: 2012
+        y: 186
+        width: 120
+        height: 36
+        background: Rectangle {
+            implicitHeight: 40
+            color: "#161c28"
+
+            Rectangle {
+                width: parent.width
+                height: 1
+                anchors.bottom: parent.bottom
+                color: "transparent"
+            }
+        }
+        ToolButton {
+            x: 80
+            y: 0
+            width: 40
+            height: 36
+            action: closewindowAction
+            Image {
+                id: closewindow
+                x: 8
+                y: 6
+                width: 24
+                height: 24
+                source: "images/Dell.png"
+                fillMode: Image.PreserveAspectFit
+            }
+        }
+
+        ToolButton {
+            x: 40
+            y: 0
+            width: 40
+            height: 36
+            action: showFullScreenAction
+            Image {
+                id: fullscreen
+                x: 8
+                y: 6
+                width: 24
+                height: 24
+                source: "images/Out.png"
+                fillMode: Image.PreserveAspectFit
+            }
+        }
+
+        ToolButton {
+            x: 0
+            y: 0
+            width: 40
+            height: 36
+            action: minimizewindowAction
+            Image {
+                id: minimizewindow
+                x: 8
+                y: 6
+                width: 24
+                height: 24
+                source: "images/Credit card.png"
+                fillMode: Image.PreserveAspectFit
+            }
+        }
+    }
+
+    Closewindow_btn {
+        id: closewindow_btn
+        x: 1884
+        y: 0
+    }
 }
 
 /*##^##
@@ -274,3 +370,4 @@ Designer {
     D{i:0;formeditorZoom:0.5;height:1080;width:1920}
 }
 ##^##*/
+

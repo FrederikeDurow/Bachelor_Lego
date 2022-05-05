@@ -82,10 +82,3 @@ Item {
         }
     ]
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:3}
-}
-##^##*/
-
