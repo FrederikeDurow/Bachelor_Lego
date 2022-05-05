@@ -39,14 +39,8 @@ class ur_robot:
       
 
     def run_lap(self):
-        #IP = '192.168.1.68'
-        #PORT = 30004
-        #IP = input("Enter IP of Robot:")
-        #PORT = 30004
 
-        #datatest = ['timestamp']
-
-        print("\n[MSG] Start running\n")
+        #print("\n[MSG] Start running\n")
 
         self.rtde_in_out.setStandardDigitalOut(0,False)
         self.rtde_in_out.setStandardDigitalOut(1,False)
@@ -60,7 +54,7 @@ class ur_robot:
         if self.robot_dash.isConnected() == True:
             while self.robot_recive.getActualDigitalOutputBits() == False:    
                 if self.robot_dash.running() == False:
-                    print("\n[MSG] Starting Loop\n")
+                    #print("\n[MSG] Starting Loop\n")
                     self.robot_dash.play()
                     time.sleep(2.0)
                 else:
@@ -71,7 +65,7 @@ class ur_robot:
                 # ---- THE SCRIPT WILL SET ONE OF THE DIGITALOUTPUTBITS HIGH ----
             
             # Makes sure to stop the UR until the Computer Vision has taken place
-            print("\n[MSG] End of loop\n")
+            #print("\n[MSG] End of loop\n")
             self.robot_dash.pause()
             print("\n[MSG] Waiting for start running signal\n")
             return True

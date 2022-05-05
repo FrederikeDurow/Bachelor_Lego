@@ -10,15 +10,6 @@ import dashboard_client
 # move node, as it will only move between waypoint if is set up like that
 
 def establish_connection():
-    ROBOT_PORT = 30004
-
-   # rtde_io1 =rtde_io.RTDEIOInterface(ROBOT_IP)
-   # try:
-   #     robot_dash.connect()
-   # finally:
-   #     if robot_dash.isConnected() != True:
-   #         print("Failed to connect with the given IP-address")
-   #         print("Please check connect and the entered IP-address")
     IP = '192.168.1.68'
     ROBOT_IP = IP
     #ROBOT_IP = input("Enter IP-address of Robot: ")
