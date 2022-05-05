@@ -39,11 +39,7 @@ class BoundingBox():
         self.add_data()
     
     def add_data(self):
-        self.data.append('')
-        self.data.append(self.x_large)
-        self.data.append(self.y_large)
-        self.data.append(self.w_large)
-        self.data.append(self.h_large)
+        self.data.append([self.x_large,self.y_large,self.w_large,self.h_large])
 
     def drawBoundingbox(self):
         """ 
@@ -52,13 +48,14 @@ class BoundingBox():
             Output image with the bounding box drawn        
         """
         self.output_img = cv2.rectangle(self.img, (self.x_large, self.y_large), (self.x_large + self.w_large, self.y_large + self.h_large), (0,255,0), 2)
+       
         return self.output_img
 
     def get_data(self):
         return self.data
     
     def clear_data(self):
-        self.data.clear()
+        self.data = []
 
 
 

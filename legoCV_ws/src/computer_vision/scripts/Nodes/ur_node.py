@@ -32,10 +32,11 @@ class ur_robot:
 
     def callback(self, request):
         if request.start == True:
-            self.run_lap()
+            return RoboResponse(self.run_lap())
         elif request.start == False:
-            self.test_done()
-        return RoboResponse(True)
+            return RoboResponse(self.test_done())
+        #return RoboResponse(True)
+      
 
     def run_lap(self):
         #IP = '192.168.1.68'
@@ -57,43 +58,29 @@ class ur_robot:
         self.rtde_in_out.setStandardDigitalOut(7,False)
 
         if self.robot_dash.isConnected() == True:
-            print("ADOB: " +str(self.robot_recive.getActualDigitalOutputBits()))
-
-            # while self.robot_recive.getActualDigitalOutputBits() != False:
-            #     print("Computer Vision is prossesing")
-            #     time.sleep(4.0)
-            #     self.rtde_in_out.setStandardDigitalOut(0,False)
-            #     self.rtde_in_out.setStandardDigitalOut(1,False)
-            #     self.rtde_in_out.setStandardDigitalOut(2,False)
-            #     self.rtde_in_out.setStandardDigitalOut(3,False)
-            #     self.rtde_in_out.setStandardDigitalOut(4,False)
-            #     self.rtde_in_out.setStandardDigitalOut(5,False)
-            #     self.rtde_in_out.setStandardDigitalOut(6,False)
-            #     self.rtde_in_out.setStandardDigitalOut(7,False)
-            #     time.sleep(1.0)
-        
             while self.robot_recive.getActualDigitalOutputBits() == False:    
                 if self.robot_dash.running() == False:
-                    print("Starting Loop")
+                    print("\n[MSG] Starting Loop\n")
                     self.robot_dash.play()
                     time.sleep(2.0)
                 else:
                     self.counter = record.record_data(self.counter, self.frequency)
+                   
     
          
                 # ---- THE SCRIPT WILL SET ONE OF THE DIGITALOUTPUTBITS HIGH ----
             
             # Makes sure to stop the UR until the Computer Vision has taken place
-            print("End of loop")
+            print("\n[MSG] End of loop\n")
             self.robot_dash.pause()
             print("\n[MSG] Waiting for start running signal\n")
-            #return RoboResponse(True)
+            return True
 
     def test_done(self):
         self.robot_dash.stop()
         self.robot_dash.disconnect()
         self.robot_recive.stopFileRecording()
-        # return RoboResponse(True)
+        return True
 
 def main():
     rospy.init_node('UR-Robot', anonymous=True)

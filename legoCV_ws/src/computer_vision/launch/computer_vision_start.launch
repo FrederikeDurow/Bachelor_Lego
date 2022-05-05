@@ -6,8 +6,6 @@
 
     <node pkg="computer_vision" type="ur_node.py" name="UR" />
 
-    <node pkg="computer_vision" type="tracker_node.py" name="MotionTracker" />
-
-    <node pkg="computer_vision" type="video_saver.py" name="VideoSaver" />
+  
 
 </launch>

@@ -17,8 +17,8 @@ class ProjectSetup:
         #Initializations for Camera Stream
         self.current_frame = None
         self.windowName = name
+        
         self.sub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.callback)
-
 
         #Initializations for Test Info
         self.testType = None
@@ -38,9 +38,8 @@ class ProjectSetup:
             self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         except CvBridgeError as e:
             print(e)
-            
-        self.undistort()
         self.current_frame = self.newRois.draw_rois(self.current_frame)
+        cv2.namedWindow(self.windowName)
         cv2.imshow(self.windowName, self.current_frame)
         cv2.waitKey(10)
 
@@ -104,6 +103,8 @@ class ProjectSetup:
         pub = rospy.Publisher(self.testType, ProjectInfo)
         rate = rospy.Rate(10) #10Hz
         #rospy.loginfo("Setup Node is publishing project information now")
+        self.sub.unregister()
+        #cv2.destroyAllWindows()
         while not rospy.is_shutdown():
             pub.publish(self.msg)
             rate.sleep()

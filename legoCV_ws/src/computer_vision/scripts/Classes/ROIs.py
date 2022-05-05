@@ -19,8 +19,8 @@ class ROIs:
         print("Select a new ROI by clicking on its desired upper left corner and lower right corner position")
         while True:
             if self.roi_added == 0:
-
                 cv2.setMouseCallback(self.window_name, self.add_roi)
+                pass
             else:
                 print("Press 'd' to delete the last ROI")
                 print("Press 'r' to select another ROI")
@@ -35,7 +35,8 @@ class ROIs:
                     break
 
 
-    def add_roi(self, event ,x,y,flags,params):
+    def add_roi(self, event,x,y,flags,*params):
+        print("in callback")
         if (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 0):
             self.set_upperleft(x,y)   
         elif (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 1):
@@ -46,6 +47,7 @@ class ROIs:
         self.temp_roi.append(x)
         self.temp_roi.append(y)
         self.roi_state = 1
+        pass
 
 
     def set_lowerright(self, x, y):
@@ -54,6 +56,7 @@ class ROIs:
         self.rois.append(self.temp_roi)
         self.roi_state = 0
         self.roi_added = 1 
+        pass
 
 
     def draw_rois(self, image):

@@ -12,26 +12,16 @@ class VideoSaver:
         self.cvimg = None
         self.testStatus = "Waiting"
 
-        # #Create subscriber to Test Nodes
-        # self.nodeSub = rospy.Subscriber("LegoTestStatus", String, self.nodeCallback)
-
         #Create subscriber to Camera
         self.camSub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.camCallback)
 
         #Create Video Writer
-        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-        self.out = cv2.VideoWriter(fileName+'.mp4', fourcc, 100.0, (1440,1080), 0)
-
-    def nodeCallback(self, data):
-        if data == "Start":
-            self.testStatus = "Running"
-        elif data == "Stop":
-            self.testStatus = "Done"
+        fourcc = cv2.VideoWriter_fourcc(*'MPEG')
+        self.out = cv2.VideoWriter(fileName+'.avi', fourcc, 24, (1440,1080), 1)
 
     def camCallback(self, data):
         if self.testStatus == "Running":
             bridge = CvBridge()
-            rospy.loginfo(rospy.get_caller_id() + "Camera Image recieved")
             try:
                 self.cvimg = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')       
             except CvBridgeError as e:

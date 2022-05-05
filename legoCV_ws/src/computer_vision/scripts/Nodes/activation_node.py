@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 from unittest.mock import DEFAULT
+
+from cv2 import imwrite
 import rospy
 import sys
 import cv2
+import time
 import numpy as np
 from sensor_msgs.msg import Image
 from std_msgs.msg import Int8
@@ -23,12 +26,17 @@ class ActivationTest:
         self.file_name = None
         self.start_frame = None
         self.current_frame = None
+        self.called = 0 
+        self.img = None
+        self.video_started = False
+
         #self.testStarted = False
         self.nrOfLaps = None
         self.lapCounter = 0
         #self.rois = [[1,2,3,4],[2,3,4,5],[3,4,5,6],[4,5,6,7]]
         self.rois = []
         self.test_started = False
+        self.camera_ready = False
         
         #Variables to Check for Malfunctions
         self.control_positions = []
@@ -47,7 +55,7 @@ class ActivationTest:
 
         #Create subscriber to camera
         self.camSub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.camCallback)
-
+        
         #Create subscriber to Setup Node
         self.setupSub = rospy.Subscriber("ActivationTestInfo", ProjectInfo, self.setupCallback)
 
@@ -84,18 +92,20 @@ class ActivationTest:
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
         self.VS = VideoSaver.VideoSaver(self.file_name)
-        self.VS.start_recording()
         self.get_control_data()
-        self.process_control_data()
-        self.test_started = True                                             
+        #self.process_control_data(bb_data)
+        self.test_started = True                                          
         self.run_robot(True)
 
     def get_control_data(self):
+        cnt = 0
         for roi in self.rois:
+            cnt += 1
             crop_img = self.current_frame[roi[1]:roi[1]+roi[3],roi[0]:roi[0]+roi[2]]
-            #cv2.imshow("test")
             self.BB.applyBoundingBox(crop_img)
-        bb_data = self.BB.get_data()
+            temp = self.BB.drawBoundingbox()
+            cv2.imwrite("ControlRoi"+str(cnt)+".jpg", temp)
+        bb_data=self.BB.get_data()
         self.BB.clear_data()
         self.process_control_data(bb_data)
 
@@ -106,30 +116,35 @@ class ActivationTest:
             self.control_positions.append([control_data[bb][0], control_data[bb][1]])
             w_list.append(control_data[bb][2])
             h_list.append(control_data[bb][3])
-        print(self.control_positions)
-        self.w_min = np.mean(w_list) - np.var(w_list)*2
-        self.w_max = np.mean(w_list) + np.var(w_list)*2
-        self.h_min = np.mean(h_list) - np.var(h_list)*2
-        self.h_max = np.mean(h_list) + np.var(h_list)*2
+        self.w_min = np.mean(w_list) - np.var(w_list)*5
+        self.w_max = np.mean(w_list) + np.var(w_list)*5
+        self.h_min = np.mean(h_list) - np.var(h_list)*5
+        self.h_max = np.mean(h_list) + np.var(h_list)*5
     
     def run_robot(self, request):
         #Create service to Robot
-        # rospy.wait_for_service("RunNextLap")
-        # self.rate = rospy.Rate(1)
-        # roboService = rospy.ServiceProxy("RunNextLap", Robo)
-        # roboService(request)
-        # self.rate.sleep()
-        self.roboCallback()
+        rospy.wait_for_service("RunNextLap")
+        if self.video_started == False:
+            self.VS.start_recording()
+            self.video_started == True
+        self.rate = rospy.Rate(1)
+        roboService = rospy.ServiceProxy("RunNextLap", Robo)
+        roboService(request)
+        if request == True:
+            self.roboCallback()
+            self.rate.sleep()
+        else:
+            pass
 
-    
 ### RUNNING ###########################################################################################################
     def camCallback(self,data):
+        self.camera_ready = True
         bridge = CvBridge()
         try:
             self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         except CvBridgeError as e:
             print(e)
-            
+        cv2.imshow("currentframe", self.current_frame)
         #self.undistort()
         if self.test_started == True:
             if self.current_frame is not None:
@@ -143,21 +158,32 @@ class ActivationTest:
 
 
     def roboCallback(self):
-        self.lapCounter += 1
-        self.get_data()
-        #self.process_data()
-        print(self.lapCounter)
-        if self.lapCounter == self.nrOfLaps:
-            self.run_robot(False)
-            self.stop_test()
-        else:
+        if self.called == 0:
+            self.called = 1
+            self.lapCounter += 1
+            print("Laps run:" + str(self.lapCounter))
+            self.get_data()
+            self.process_data()
+            if self.lapCounter == self.nrOfLaps:                                                
+                self.run_robot(False)
+                self.stop_test()
+            else:
+                self.run_robot(True)
+        elif self.called == 1:
+            self.called = 0
             self.run_robot(True)
     
     def get_data(self):
+        cnt = 0
+        self.temp_data = []
         for roi in self.rois:
+            cnt += 1
             crop_img = self.current_frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]]
             self.BB.applyBoundingBox(crop_img)
+            temp = self.BB.drawBoundingbox()
+            cv2.imwrite("lap"+str(self.lapCounter)+"Roi"+str(cnt)+".jpg", temp)
         self.temp_data = self.BB.get_data()
+        self.BB.clear_data()
         #self.BB.save_data(self.lapCounter)
     
     def process_data(self):
@@ -165,12 +191,15 @@ class ActivationTest:
         self.check_position()
         self.check_size()
         self.update_malfunctions()
+        
 
     def check_position(self):
-        print(self.control_positions)
+        # print("Control Positions:")
+        # print(self.control_positions)
         for i in range(len(self.rois)):
             x,y = self.control_positions[i]
             x_new,y_new,_,_ = self.temp_data[i]
+            # print("Roi nr " + str(i)+ " x: " +str(x_new) +", y: "+ str(y_new))
             if x_new in range(x-self.x_buffer, x+self.x_buffer):
                 if y_new in range(y-self.y_buffer, y+self.y_buffer):
                     self.result.append(1)
@@ -178,16 +207,19 @@ class ActivationTest:
                     self.result.append(0)
             else:
                 self.result.append(0)
-        print(self.result)
+        #print(self.result)
        
     def check_size(self):
+        # print("Control w_min: " + str(self.w_min) + ", w_max: " + str(self.w_max))
+        # print("Control h_min: " + str(self.h_min) + ", h_max: " + str(self.h_max))
         for i in range(len(self.rois)):
             _,_,w,h = self.temp_data[i]
+            # print("Roi nr " + str(i)+ " w: " +str(w) +", h: "+ str(h))
             if (w not in range(int(self.w_min), int(self.w_max))) or (h not in range(int(self.h_min), int(self.h_max))):
                 self.result[i]= 0
 
     def update_malfunctions(self):
-        for i in range(len(self.Rois)):
+        for i in range(len(self.rois)):
             if self.result[i] == 0 and self.malfunctions[i] == 0:
                 self.malfunctions[i] = self.lapCounter
 
@@ -203,7 +235,7 @@ class ActivationTest:
 
     def save_data(self):
         row = ['Malfunction detected after lap:']
-        for r in range(self.rois):
+        for r in range(len(self.rois)):
             if self.malfunctions[r] != 0:
                 row.append(self.malfunctions[r])
             else:
