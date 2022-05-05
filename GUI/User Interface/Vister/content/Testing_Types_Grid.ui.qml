@@ -9,10 +9,11 @@ Check out https://doc.qt.io/qtcreator/creator-quick-ui-forms.html for details on
 import QtQuick 2.15
 
 GridView {
+    id: gridView
 
     width: 544
     height: 520
-    interactive: false
+    interactive: true
     property string property0: "none.none"
     layer.enabled: false
     layoutDirection: Qt.LeftToRight
@@ -42,7 +43,7 @@ GridView {
 
 /*##^##
 Designer {
-    D{i:0;height:0;width:0}
+    D{i:0;height:520;width:544}
 }
 ##^##*/
 

@@ -49,10 +49,8 @@ Item {
         y: 577
         Connections {
             target: loadproject_button
-            onClicked: popup.state = 'Normal'
+            onClicked: selectTestingType.state = 'Normal'
         }
-        checkable: true
-        autoExclusive: true
     }
 
     Createproject_button {
@@ -65,21 +63,24 @@ Item {
         }
     }
 
-
-    Popup {
-        id: popup
-        x: 538
-        y: 304
-        visible: false
-        enabled: false
-    }
-
     SelectTestingType {
         id: selectTestingType
         x: 356
         y: 133
         visible: false
         enabled: false
+    }
+
+    Popup {
+        id: popup
+        x: -10
+        y: 392
+    }
+
+    Popup {
+        id: popup1
+        x: 0
+        y: 310
     }
 
 }

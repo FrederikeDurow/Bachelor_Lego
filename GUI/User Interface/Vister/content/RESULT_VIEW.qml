@@ -5,25 +5,25 @@ Item {
     width: 1920
     height: 1080
 
+
     Image {
-        id: result_section
+        id: result_section1
         x: 106
         y: 38
-        source: "../../Components/Result_section/Result_section.png"
+        source: "../../Components/Result_section.png"
         fillMode: Image.PreserveAspectFit
-
-        Rectangle {
-            id: rectangle
-            x: 0
-            y: 0
-            width: 1792
-            height: 1040
-            opacity: 0.504
-            color: "#000000"
-        }
     }
 
 
+    Rectangle {
+        id: rectangle
+        x: 106
+        y: 38
+        width: 1792
+        height: 1040
+        opacity: 0.504
+        color: "#000000"
+    }
 }
 
 /*##^##

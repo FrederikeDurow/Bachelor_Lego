@@ -47,18 +47,14 @@ Window {
 
     HOME_VIEW {
         id: hOME_VIEW
-
-        SETUP_VIEWS {
-            id: sETUP_VIEWS
-            x: 74
-            y: 16
-        }
     }
 
-    Screen01 {
-        id: setupScreen
+    View_stages {
+        id: view_stages
         x: 0
-        y: 1124
+        y: 0
+
+
     }
 
 

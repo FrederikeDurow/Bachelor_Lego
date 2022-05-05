@@ -12,7 +12,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Studio.EventSystem 1.0
 
 Item {
-    id: item1
+    id: feature_not_implemented
     width: 760
     height: 362
     enabled: true
@@ -52,7 +52,7 @@ Item {
             y: 29
             enabled: true
             Connections {
-                onClicked: item1.state = 'Unchecked'
+                onClicked: feature_not_implemented.state = 'Unchecked'
             }
         }
 
@@ -62,7 +62,7 @@ Item {
             y: 285
             enabled: true
             Connections {
-                onClicked: item1.state = 'Unchecked'
+                onClicked: feature_not_implemented.state = 'Unchecked'
             }
         }
     }
@@ -70,20 +70,20 @@ Item {
     states: [
         State {
             name: "Normal"
-            when: item1.enabled
+            when: feature_not_implemented.enabled
 
             PropertyChanges {
-                target: item1
+                target: feature_not_implemented
                 visible: true
                 enabled: true
             }
         },
         State {
             name: "Unchecked"
-            when: !item1.enabled
+            when: !feature_not_implemented.enabled
 
             PropertyChanges {
-                target: item1
+                target: feature_not_implemented
                 visible: false
                 enabled: false
             }
