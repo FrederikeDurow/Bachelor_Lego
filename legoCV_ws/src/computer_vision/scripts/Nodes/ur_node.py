@@ -2,6 +2,7 @@
 import sys
 import rospy
 from computer_vision.srv import Robo, RoboResponse
+from std_msgs.msg import Bool
 sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import rtde_io
@@ -11,6 +12,13 @@ import time
 
 class ur_robot:
     def __init__(self):
+        #Wait for start signal from Setup_Node
+        self.start = False
+        self.sub = rospy.Subscriber("StartRobot", Bool, self.startCallback)
+
+        while self.start == False:
+            pass
+            
         self.counter = 0
         self.robot_dash, self.ip = PURP.establish_connection()
         PURP.check_robot_mode(self.robot_dash)
@@ -25,6 +33,8 @@ class ur_robot:
         #self.record()
         self.roboSrv = rospy.Service("RunNextLap", Robo, self.callback)
     
+    def startCallback(self, data):
+        self.start = data
 
     def record(self):
         while self.robot_dash.isConnected() == True:

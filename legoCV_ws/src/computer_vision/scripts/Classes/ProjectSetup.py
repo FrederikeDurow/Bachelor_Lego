@@ -3,7 +3,9 @@ import rospy
 import cv2
 import sys
 import numpy as np
+import subprocess
 from sensor_msgs.msg import Image
+from std_msgs.msg import Bool
 from cv_bridge import CvBridge, CvBridgeError
 sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 from Classes import ROIs
@@ -13,7 +15,6 @@ from computer_vision.msg import RoiList
 class ProjectSetup:
 
     def __init__(self, name):
-
         #Initializations for Camera Stream
         self.current_frame = None
         self.windowName = name
@@ -54,10 +55,10 @@ class ProjectSetup:
         while True:
             key = input()
             if key == "a":
-                self.testType = "ActivationTestInfo"
+                self.testType = "ActivationTest"
                 break
             elif key == "m":
-                self.testType = "MotionTrackingInfo"
+                self.testType = "MotionTracking"
                 break
 
 
@@ -66,6 +67,9 @@ class ProjectSetup:
         self.set_laps()
         self.set_rois()
         self.set_file_name()
+    
+    # def set_robot_info(self):
+    #     pass
 
     def get_test_type(self):
         return self.testType
@@ -88,7 +92,7 @@ class ProjectSetup:
         print("Please enter the output file name, followed by pressing enter:")
         self.fileName = input()
 
-    def create_message(self):
+    def create_test_message(self):
         info = ProjectInfo()
         info.FileName = self.fileName
         info.Lap = int(self.nrOfLaps)
@@ -99,12 +103,18 @@ class ProjectSetup:
         self.msg = info
         print(self.msg)
     
+    # def create_robot_message(self):
+    #     pass
+    
     def publish_info(self):
-        pub = rospy.Publisher(self.testType, ProjectInfo)
+        self.create_test_message()
+        testPub = rospy.Publisher(self.testType, ProjectInfo)
+        if self.testType == "ActivationTest":
+            robotPub = rospy.Publisher("StartRobot", Bool)
         rate = rospy.Rate(10) #10Hz
-        #rospy.loginfo("Setup Node is publishing project information now")
         self.sub.unregister()
-        #cv2.destroyAllWindows()
         while not rospy.is_shutdown():
-            pub.publish(self.msg)
+            testPub.publish(self.msg)
+            if self.testType == "ActivationTest":
+                robotPub.publish(True)
             rate.sleep()
