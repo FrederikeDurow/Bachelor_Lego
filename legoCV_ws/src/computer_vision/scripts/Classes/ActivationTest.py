@@ -47,7 +47,7 @@ class ActivationTest:
         self.malfunctions = []
 
         #Create subscriber to camera
-        self.camSub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.camCallback)
+        self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
         
         #Create subscriber to Setup Node
         self.setupSub = rospy.Subscriber("ActivationTest", ProjectInfo, self.setupCallback)

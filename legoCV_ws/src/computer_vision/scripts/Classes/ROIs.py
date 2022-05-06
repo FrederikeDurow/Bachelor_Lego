@@ -10,42 +10,55 @@ class ROIs:
         self.rois = []
         self.roi_state = 0
         self.roi_added = 0
+        self.roi_chosen = False
    
 
     def get_rois(self):
         return self.rois
 
-    def set_rois(self):
-        print("Select a new ROI by clicking on its desired upper left corner and lower right corner position")
-        while True:
-            if self.roi_added == 0:
-                cv2.setMouseCallback(self.window_name, self.add_roi)
-                pass
-            else:
-                print("Press 'd' to delete the last ROI")
-                print("Press 'r' to select another ROI")
-                print("Press any other key to save chosen ROIs")
-
-                key = input()
+    def set_multi_rois(self):
+        print("Select region by clicking on its upper left corner followed by lower right corner.")
+        cv2.setMouseCallback(self.window_name, self.add_roi)
+        while True: 
+            if self.roi_chosen == True:
+                key = input("Press 'd' to delete the last ROI, 'r' to select another ROI or 's' to save chosen ROIs\n")
                 if key == "d":
                     self.rois.pop()
                 elif key == "r":
                     self.roi_added = 0
-                else:
+                    self.roi_chosen = False
+                    print("Please select the next ROI")
+                elif key == "s":
                     break
+                else:
+                    pass
 
+    def set_single_roi(self):
+        print("Select region by clicking on its upper left corner followed by lower right corner.")
+        cv2.setMouseCallback(self.window_name, self.add_roi)
+        while True: 
+            if self.roi_chosen == True:
+                key = input("Press 'd' to delete the last ROI or 's' to save it\n")
+                if key == "d":
+                    self.rois.pop()
+                elif key == "s":
+                    break
+                else:
+                    pass
 
     def add_roi(self, event,x,y,flags,*params):
-        print("in callback")
         if (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 0):
             self.set_upperleft(x,y)   
         elif (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 1):
             self.set_lowerright(x,y)
+        else: 
+            pass
 
     def set_upperleft(self, x, y):
         self.temp_roi = []
         self.temp_roi.append(x)
         self.temp_roi.append(y)
+        self.roi_chosen = True
         self.roi_state = 1
         pass
 

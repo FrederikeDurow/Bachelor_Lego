@@ -12,6 +12,7 @@ sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Leg
 from Classes import DataFile
 from Classes import Object_Color_Detector
 from Classes import CentroidTracker
+from Classes import VideoSaver
 from collections import OrderedDict
 
 
@@ -40,12 +41,13 @@ class MotionTracker:
         self.test_start_time = 0
         self.lap_start_time = 0
         self.lap_time = 0
+        self.color = None
 
         #Create subscriber to Setup Node
         self.setupSub = rospy.Subscriber("MotionTracking", ProjectInfo, self.setupCallback)
 
         #Create subscriber to camera
-        self.camSub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.camCallback)
+        self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
 
         #create Centroid Tracker
         self.tracker = CentroidTracker.centroidTracker()
@@ -54,8 +56,14 @@ class MotionTracker:
 ### SETUP #############################################################################################################
     def setupCallback(self, data):
         print("Setup data recieved")
+        self.unpack_message(data)
+        self.setupSub.unregister()
+        self.start_test()
+        
+    def unpack_message(self, data):
         self.file_name = data.FileName
         self.nrOfLaps = data.Lap
+        self.color = data.Color
         cnt = 0
         for roi in data.Rois:
             temp_roi = []
@@ -67,11 +75,13 @@ class MotionTracker:
             elif cnt == 1: 
                 self.lap_roi = [temp_roi[0]-self.total_roi[0],temp_roi[1]-self.total_roi[1], temp_roi[2], temp_roi[3]] 
 
+    def start_test(self):
+        self.VS = VideoSaver.VideoSaver(self.file_name)
+        self.VS.start_recording()
         self.setup_datafile()
-        self.setupSub.unregister()
+        self.update_timer()
         self.test_started = True
-        #self.start_test()
-    
+
     def setup_datafile(self):
         header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
         self.lapFile = DataFile.DataFile(self.file_name,header)
@@ -95,11 +105,11 @@ class MotionTracker:
                 self.stop_test()
             self.prep_image()
             
-            self.detections = self.detector.applyColorDectector(self.crop_img, 200)
+            self.detections = self.detector.applyColorDectector(self.crop_img, self.color, 200)
             self.objects = self.tracker.update(self.detections)
             self.draw_id()
             cv2.rectangle(self.crop_img, (self.lap_roi[0],self.lap_roi[1]), (self.lap_roi[0]+self.lap_roi[2], self.lap_roi[1]+self.lap_roi[3]), (0,255,0), 2)
-
+            cv2.imshow(self.project_name, self.crop_img)
             self.check_position()
             self.update_laps()
             
@@ -133,11 +143,6 @@ class MotionTracker:
                 cv2.putText(self.crop_img, text, (centroid[0]-10, centroid[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0),2)
                 cv2.circle(self.crop_img, (centroid[0], centroid[1]), 4, (0,0,255), -1)
 
-    def show_tracker(self):
-        self.current_frame[self.total_roi[1] : self.total_roi[1]+self.total_roi[3], self.total_roi[0] : self.total_roi[0]+self.total_roi[2]] = self.crop_img
-        #output.write(frame) 
-        cv2.imshow(self.project_name, self.current_frame)
-
   
     def check_position(self):
         self.old_position = self.position
@@ -163,17 +168,15 @@ class MotionTracker:
         if self.timer_started == False:
             self.timer_started = True
             self.test_start_time = time.time()
+            self.lap_start_time = time.time()
         self.lap_time = time.time() - self.lap_start_time
         self.lap_start_time = time.time()
        
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
-        #Save video 
-        #Save data
+        self.VS.stop_recording()
         print("The test has been completed and the data is saved.")
-        #Stop all subscriptions, publisher and windows
         self.camSub.unregister()
-        #self.roboSub.unregister()
         cv2.destroyAllWindows()
 
     def save_data(self):

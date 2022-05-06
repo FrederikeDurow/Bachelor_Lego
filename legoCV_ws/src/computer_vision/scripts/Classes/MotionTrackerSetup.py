@@ -12,20 +12,20 @@ from Classes import ROIs
 from computer_vision.msg import ProjectInfo
 from computer_vision.msg import RoiList
 
-class ProjectSetup:
+class MotionTrackerSetup:
 
-    def __init__(self, name):
+    def __init__(self):
         #Initializations for Camera Stream
         self.current_frame = None
-        self.windowName = name
-        
-        self.sub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.callback)
+        self.windowName = "Motion Tracker Test"
+        self.sub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.callback)
 
         #Initializations for Test Info
-        self.testType = None
         self.nrOfLaps = 0
         self.fileName = None
         self.rois = []
+        self.color = None
+
         #Initializations for Regions of Interest
         self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
 
@@ -49,53 +49,49 @@ class ProjectSetup:
         dist = np.array([[-0.2364909197149232, 0.09037841331243952, -9.091405949805423e-05, 0.001536567533562297, 0]])
         self.current_frame = cv2.undistort(self.current_frame, cMat, dist, None)
 
-    def set_test_type(self):
-        print("What test do you want to run?")
-        print("Press 'a' for an Activation Test or 'm' for a Motion Tracking Test, followed by pressing enter")
-        while True:
-            key = input()
-            if key == "a":
-                self.testType = "ActivationTest"
-                break
-            elif key == "m":
-                self.testType = "MotionTracking"
-                break
-
-
     def set_test_info(self):
-        self.set_test_type()
         self.set_laps()
         self.set_rois()
+        self.set_color()
         self.set_file_name()
     
-    # def set_robot_info(self):
-    #     pass
-
-    def get_test_type(self):
-        return self.testType
 
     def set_laps(self):
-        print("Please enter number of laps, followed by pressing enter.")
+        print("[WAIT USER] Please enter number of laps:")
         self.nrOfLaps = input()
 
     def get_laps(self):
         return self.nrOfLaps
     
     def set_rois(self):
-        self.newRois.set_rois()
+        print("[WAIT USER] Choose the general region in which the object can be tracked (cut off unnecessary background).")
+        self.newRois.set_single_roi()
+        print("[WAIT USER] Choose where a lap starts/ends.")
+        self.newRois.set_single_roi()
         self.rois = self.newRois.get_rois()
-
+    
     def get_rois(self):
         return self.newRois.get_rois()
     
+    def set_color(self):
+        print("[WAIT USER] Is the object to track red, blue or green? Type 'r', 'b' or 'g':")
+        while True:
+            key = input()
+            if key == "r" or key == "g" or key == "b":
+                self.color = key
+                break
+            else:
+                pass
+        
     def set_file_name(self):
-        print("Please enter the output file name, followed by pressing enter:")
+        print("[WAIT USER] Please enter the output file name:")
         self.fileName = input()
 
     def create_test_message(self):
         info = ProjectInfo()
         info.FileName = self.fileName
         info.Lap = int(self.nrOfLaps)
+        info.Color = self.color
         for i in range(len(self.rois)):
             rList = RoiList() 
             rList.RoiInfo = self.rois[i]
@@ -103,18 +99,11 @@ class ProjectSetup:
         self.msg = info
         print(self.msg)
     
-    # def create_robot_message(self):
-    #     pass
-    
     def publish_info(self):
         self.create_test_message()
-        testPub = rospy.Publisher(self.testType, ProjectInfo)
-        if self.testType == "ActivationTest":
-            robotPub = rospy.Publisher("StartRobot", Bool)
+        testPub = rospy.Publisher("MotionTracking", ProjectInfo)
         rate = rospy.Rate(10) #10Hz
         self.sub.unregister()
         while not rospy.is_shutdown():
             testPub.publish(self.msg)
-            if self.testType == "ActivationTest":
-                robotPub.publish(True)
             rate.sleep()

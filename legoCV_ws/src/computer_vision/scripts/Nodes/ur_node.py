@@ -25,7 +25,7 @@ class ur_robot:
         PURP.loadURscript(self.robot_dash)
 
         self.data_to_record, self.output_file = record.data_to_output()
-        self.frequency = float(input("[WAIT USER] insert frequency of data saving (default = 500): "))
+        self.frequency = float(input("[WAIT USER] Insert frequency of data saving (default = 500): "))
         self.robot_recive = RTDEReceive(self.ip,self.frequency)
         self.rtde_in_out =rtde_io.RTDEIOInterface(self.ip)
 
