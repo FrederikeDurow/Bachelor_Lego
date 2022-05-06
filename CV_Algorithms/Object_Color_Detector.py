@@ -16,12 +16,22 @@ class obj_color_dectector():
     data_green = []
     data_blue = []
 
+    # From HSV determine_script for red
+    # lower [0,175,67]
+    # upper [10,255,255]
     red_lower = np.array([136, 87, 111], np.uint8)
     red_upper = np.array([180, 255, 255], np.uint8)
-    
+
+
+    # From HSV determine_script for green
+    # lower [57,115,67]
+    # upper [91,255,255]
     green_lower = np.array([25, 52, 72], np.uint8)
     green_upper = np.array([102, 255, 255], np.uint8)
 
+    # From HSV determine_script for green
+    # lower [94,53,53]
+    # upper [165,255,255]
     blue_lower = np.array([94, 80, 2], np.uint8)
     blue_upper = np.array([120, 255, 255], np.uint8)
 
