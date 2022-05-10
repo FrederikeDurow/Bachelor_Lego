@@ -16,7 +16,7 @@ class VideoSaver:
 
         #Create Video Writer
         fourcc = cv2.VideoWriter_fourcc(*'MPEG')
-        self.out = cv2.VideoWriter(fileName+'.avi', fourcc, 24, (1440,1080), 1)
+        self.out = cv2.VideoWriter(fileName+'.avi', fourcc, 24, (1440,1080),1)
 
     def camCallback(self, data):
         if self.testStatus == "Running":
@@ -25,25 +25,26 @@ class VideoSaver:
                 self.cvimg = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')       
             except CvBridgeError as e:
                 print(e)
-            self.save_video()
+            self.add_to_video()
 
-        elif self.testStatus == "Done":
-            self.stream_closed()
+        elif self.testStatus == "Stop":
+            self.stop_recording()
         else:
             pass
 
     def cv_show(self):
-        cv2.imshow("cv image", self.cvimg)
+        cv2.imshow("VideoSaver image", self.cvimg)
         cv2.waitKey(10)
     
     def start_recording(self):
         self.testStatus = "Running"
     
     def stop_recording(self):
-        self.testStatus = "Done"
+        self.testStatus = "Stop"
+        self.out.release()
 
-    def save_video(self): 
+    def add_to_video(self): 
         self.out.write(self.cvimg)    
     
-    def stream_closed(self):
-        self.out.release()
+  
+        

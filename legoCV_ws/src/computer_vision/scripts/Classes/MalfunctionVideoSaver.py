@@ -21,43 +21,53 @@ class MalfunctionVideoSaver:
         self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
 
     def camCallback(self, data):
+        #print(self.testStatus)
+        bridge = CvBridge()
+        try:
+            self.cvimg = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')       
+        except CvBridgeError as e:
+            print(e)
+
         if self.testStatus == "Running":
-            bridge = CvBridge()
-            try:
-                self.cvimg = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')       
-            except CvBridgeError as e:
-                print(e)
-            self.save_video()
-            
-        elif self.testStatus == "Done":
-            self.out.release()
+            #print("realizing it is running")
+            self.add_to_video()   
         else:
             pass
 
-    
     def cv_show(self):
-        cv2.imshow("cv image", self.cvimg)
+        cv2.imshow("Mal image", self.cvimg)
         cv2.waitKey(10)
     
     def start_recording(self,name):
+        print("Starting again")
         self.vidName = name+'.avi'
-        fourcc = cv2.VideoWriter_fourcc(*'MPEG')
-        self.out = cv2.VideoWriter(os.path.join(self.path,self.vidName), fourcc, 24, (1440,1080), 1)
         self.testStatus = "Running"
-    
-    def stop_recording(self):
-        self.testStatus = "Done"
-
+        fourcc = cv2.VideoWriter_fourcc(*'MPEG')
+        self.out = cv2.VideoWriter(os.path.join(self.path,self.vidName), fourcc, 12, (1440,1080), 1)
+        
     def add_to_video(self): 
-        self.out.write(self.cvimg)    
+        print("Adding image")
+        self.out.write(self.cvimg) 
+
+    def stop_recording(self):
+        print("Releasing Video")
+        self.testStatus = "Stop"
+        #print("In stop_recording")
+        self.out.release()
+
+       
     
     def delete_video(self):
         #self.out.delete()
-        if self.testStatus == "Running":
+        print("Deleting Video")
+        try:
             os.remove(os.path.join(self.path,self.vidName))
-    
-    def save_video(self):
-        self.out.release()
+        except:
+            pass
+        
+    # def save_video(self):
+    #     self.testStatus = "Waiting"
+    #     self.out.release()
 
     # def update_buffer(self, new_img):
     # #Save newest camera stream frame

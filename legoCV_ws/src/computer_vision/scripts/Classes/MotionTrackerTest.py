@@ -63,7 +63,9 @@ class MotionTracker:
     def unpack_message(self, data):
         self.file_name = data.FileName
         self.nrOfLaps = data.Lap
-        self.color = data.Color
+        #self.color = data.Color
+        self.hsv_low = data.HSV_lower
+        self.hsv_up = data.HSV_upper
         cnt = 0
         for roi in data.Rois:
             temp_roi = []
@@ -106,7 +108,7 @@ class MotionTracker:
                 self.stop_test()
             self.prep_image()
             
-            self.detections = self.detector.applyColorDectector(self.crop_img, self.color, 200)
+            self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
             self.objects = self.tracker.update(self.detections)
             self.draw_id()
             cv2.rectangle(self.crop_img, (self.lap_roi[0],self.lap_roi[1]), (self.lap_roi[0]+self.lap_roi[2], self.lap_roi[1]+self.lap_roi[3]), (0,255,0), 2)

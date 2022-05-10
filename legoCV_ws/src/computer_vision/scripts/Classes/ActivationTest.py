@@ -22,7 +22,7 @@ class ActivationTest:
         self.file_name = None
         self.start_frame = None
         self.current_frame = None
-        self.called = 0 
+        self.called = 1 
         self.img = None
         self.first_lap_run = False
         self.testVideo = 0
@@ -84,7 +84,7 @@ class ActivationTest:
     def setup_datafile(self):
         header = [' ']
         for r in range(len(self.rois)):
-            header.append('Object'+str(r))                                                                 
+            header.append('Object'+str(r+1))                                                                 
         self.malfunctionFile = DataFile.DataFile(self.file_name,header)
 
 ### STARTING ##########################################################################################################
@@ -127,6 +127,7 @@ class ActivationTest:
         print("\n[MSG] Test is running, don't shutdown computer.")  
         # self.malVS.start_recording()
         if self.testVideo == True:
+            print("calling total video")
             self.testVS.start_recording()
         self.first_lap_run = True
 
@@ -139,7 +140,7 @@ class ActivationTest:
         # roboService = rospy.ServiceProxy("RunNextLap", Robo)
         self.roboService(request)
         if request == True:
-            self.malVS.start_recording("Lap"+str(self.lapCounter))
+            self.malVS.start_recording("Lap"+str(1+self.lapCounter))
             self.roboCallback()
             self.rate.sleep()
         else:
@@ -222,15 +223,19 @@ class ActivationTest:
                 self.result[i]= 0
 
     def update_malfunctions(self):
+        print("in malfunction")
         malfunction_occured = False
         for i in range(len(self.rois)):
             if self.result[i] == 0 and self.malfunctions[i] == 0:
                 self.malfunctions[i] = self.lapCounter
                 malfunction_occured = True
-        self.malVS.save_video()
-        if malfunction_occured == False:
-            self.malVS.delete_video()
+        #if self.
         self.malVS.stop_recording()
+        #self.malVS.save_video()
+        if malfunction_occured == False:
+            print("trying to delete video")
+            self.malVS.delete_video()
+        
 
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
