@@ -7,15 +7,13 @@ from Classes import MotionTrackerSetup
 
 def choose_test():
     while True:
-        print("What test do you want to run?")
-        print("Press 'a' for an Activation Test or 'm' for a Motion Tracking Test, followed by pressing enter")
+        print("\n[USER INPUT] Choose one of the following tests:\n'a' - Activation Test \n'm' - Motion Tracking Test")
         key = input()
         if key == "a" or key == "m":
             return key
             
 def main():
-    rospy.init_node('setup', anonymous=True)
-    
+    rospy.init_node('Setup', anonymous=True)
     test = choose_test()
     if test == "a":
         newProject = ActivationTestSetup.ActivationTestSetup()

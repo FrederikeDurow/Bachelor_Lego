@@ -19,8 +19,8 @@ class obj_color_dectector():
     red_lower = np.array([136, 87, 111], np.uint8)
     red_upper = np.array([180, 255, 255], np.uint8)
     
-    green_lower = np.array([25, 52, 72], np.uint8)
-    green_upper = np.array([102, 255, 255], np.uint8)
+    green_lower = np.array([35, 219, 36], np.uint8)
+    green_upper = np.array([80, 255, 255], np.uint8)
 
     blue_lower = np.array([94, 80, 2], np.uint8)
     blue_upper = np.array([120, 255, 255], np.uint8)
@@ -63,10 +63,10 @@ class obj_color_dectector():
         self.countours_green, self.hierarchy = cv2.findContours(green_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         self.countours_blue, self.hierarchy = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
-        for c in self.countours_blue:
+        for c in self.countours_green:
             x,y,w,h = cv2.boundingRect(c)
             area = (w)*(h)
-            bounding_blue = [x,y,w,h,area]
+            bounding_green = [x,y,w,h,area]
             if area > size:
-                self.data_blue.append(bounding_blue)
-        return self.data_blue
+                self.data_blue.append(bounding_green)
+        return self.data_green

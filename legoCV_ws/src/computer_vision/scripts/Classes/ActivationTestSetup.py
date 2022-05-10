@@ -24,7 +24,9 @@ class ActivationTestSetup:
         self.testType = None
         self.nrOfLaps = 0
         self.fileName = None
+        self.path = None
         self.rois = []
+        self.testVideo = 0
         #Initializations for Regions of Interest
         self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
 
@@ -48,46 +50,41 @@ class ActivationTestSetup:
         dist = np.array([[-0.2364909197149232, 0.09037841331243952, -9.091405949805423e-05, 0.001536567533562297, 0]])
         self.current_frame = cv2.undistort(self.current_frame, cMat, dist, None)
 
-    # def set_test_type(self):
-    #     print("What test do you want to run?")
-    #     print("Press 'a' for an Activation Test or 'm' for a Motion Tracking Test, followed by pressing enter")
-    #     while True:
-    #         key = input()
-    #         if key == "a":
-    #             self.testType = "ActivationTest"
-    #             break
-    #         elif key == "m":
-    #             self.testType = "MotionTracking"
-    #             break
-
-
     def set_test_info(self):
-        #self.set_test_type()
         self.set_laps()
-        self.set_rois()
+        self.set_video_settings()
+        self.set_path()
         self.set_file_name()
-    
-
-    # def get_test_type(self):
-    #     return self.testType
+        self.set_rois()
 
     def set_laps(self):
-        print("Please enter number of laps, followed by pressing enter.")
+        print("\n[USER INPUT] Please enter number of laps:")
         self.nrOfLaps = input()
 
     def get_laps(self):
         return self.nrOfLaps
     
     def set_rois(self):
+        print("\n[USER INPUT] Choose all regions of interest.")
         self.newRois.set_multi_rois()
         self.rois = self.newRois.get_rois()
-
+    
     def get_rois(self):
         return self.newRois.get_rois()
+
+    def set_path(self):
+        print("\n[USER INPUT] Enter the location at which all data and video files should be saved.:")
+        self.path = input()
     
     def set_file_name(self):
-        print("Please enter the output file name, followed by pressing enter:")
+        print("\n[USER INPUT] Please enter the output file name:")
         self.fileName = input()
+    
+    def set_video_settings(self):
+        print("\n[USER INPUT] Do you want to save a video of the whole test? (y/n)")
+        self.testVideo = input()
+        # print("\n[USER INPUT] Do you want to save a videos of malfunctions? (1 - yes, 0 - no)")
+        # self.malfunctionVideo = input()
 
     def create_test_message(self):
         info = ProjectInfo()
@@ -97,8 +94,12 @@ class ActivationTestSetup:
             rList = RoiList() 
             rList.RoiInfo = self.rois[i]
             info.Rois.append(rList)
+        if self.testVideo == "y":
+            info.TestVideo = True
+        else:
+            info.TestVideo = False
+        info.DataPath = self.path
         self.msg = info
-        print(self.msg)
     
     def publish_info(self):
         self.create_test_message()
@@ -107,7 +108,6 @@ class ActivationTestSetup:
         rate = rospy.Rate(10) #10Hz
         self.sub.unregister()
         cv2.destroyWindow(self.windowName)
-        cv2.waitKey(1)
         while not rospy.is_shutdown():
             testPub.publish(self.msg)
             robotPub.publish(True)

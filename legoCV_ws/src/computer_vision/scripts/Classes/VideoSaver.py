@@ -2,7 +2,6 @@
 import rospy
 import cv2
 from sensor_msgs.msg import Image
-from std_msgs.msg import String
 from cv_bridge import CvBridge, CvBridgeError
 
 
@@ -13,7 +12,7 @@ class VideoSaver:
         self.testStatus = "Waiting"
 
         #Create subscriber to Camera
-        self.camSub = rospy.Subscriber("/pylon_camera_node/image_raw", Image, self.camCallback)
+        self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
 
         #Create Video Writer
         fourcc = cv2.VideoWriter_fourcc(*'MPEG')

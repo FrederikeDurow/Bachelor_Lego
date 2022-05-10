@@ -55,9 +55,9 @@ class MotionTracker:
 
 ### SETUP #############################################################################################################
     def setupCallback(self, data):
-        print("Setup data recieved")
         self.unpack_message(data)
         self.setupSub.unregister()
+        print("\n[MSG] Setup is completed.")
         self.start_test()
         
     def unpack_message(self, data):
@@ -81,6 +81,7 @@ class MotionTracker:
         self.setup_datafile()
         self.update_timer()
         self.test_started = True
+        print("\n[MSG] Test is running, don't shutdown computer.")  
 
     def setup_datafile(self):
         header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
@@ -161,7 +162,9 @@ class MotionTracker:
             self.lapCounter += 1
             self.update_timer()
             self.save_data()
-            print("Nr of Laps: " + str(self.lapCounter))
+            sys.stdout.write("\r")
+            sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+            sys.stdout.flush()
         
 
     def update_timer(self):
@@ -175,7 +178,7 @@ class MotionTracker:
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
         self.VS.stop_recording()
-        print("The test has been completed and the data is saved.")
+        print("\n[MSG] The test has been completed and the data is saved.")
         self.camSub.unregister()
         cv2.destroyAllWindows()
 

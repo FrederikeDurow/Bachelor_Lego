@@ -63,10 +63,10 @@ def main(args):
     try:
         while True:
             start = time.time()
-            if i % 10 == 0:
-                sys.stdout.write("\r")
-                sys.stdout.write("{:3d} samples.".format(i))
-                sys.stdout.flush()
+            # if i % 10 == 0:
+            #     sys.stdout.write("\r")
+            #     sys.stdout.write("{:3d} samples.".format(i))
+            #     sys.stdout.flush()
             end = time.time()
             duration = end - start
 
@@ -137,9 +137,9 @@ def data_to_output():
     data_output = []
 
     #print("[INFO] See the guide from Vister for the enabling of wanted data \n")
-    print("Data that can be stored: " + str(available_data))
+    print("\n[INFO] Data that can be stored: " + str(available_data))
     while True:
-        file = str(input('\n [WAIT USER] Enter 1 for enable and 0 for uenable of data: '))
+        file = str(input('\n[WAIT USER] Enter 1 to enable and 0 to uenable recording of data \n(e.g. 100 to only record timestamp): '))
         if len(file) == len(available_data):
             data_to_be_stored = file
             break
@@ -152,9 +152,9 @@ def data_to_output():
             data_output.append(available_data[checker])
         checker +=1
     
-    print("[MSG] Data to be saved was succesfully set!\n")
+    #print("[MSG] Data to be saved was succesfully set!\n")
     #data_output.append(data_to_be_stored)
-    print(data_output)
+    #print(data_output)
     k = input('\n[WAIT USER] Enter the whished name for the CSV file: ')
     csv_file = str(k)+".csv"
 

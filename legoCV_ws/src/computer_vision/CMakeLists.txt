@@ -166,8 +166,6 @@ include_directories(
    scripts/Nodes/project_setup_node.py
    scripts/Nodes/activation_node.py
    scripts/Nodes/tracker_node.py 
-   scripts/Nodes/video_saver_node.py
-   scripts/Nodes/data_node.py 
    scripts/Nodes/ur_node.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )

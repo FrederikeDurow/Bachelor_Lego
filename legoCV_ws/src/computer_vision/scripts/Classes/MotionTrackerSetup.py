@@ -57,16 +57,16 @@ class MotionTrackerSetup:
     
 
     def set_laps(self):
-        print("[WAIT USER] Please enter number of laps:")
+        print("\n[USER INPUT] Please enter number of laps:")
         self.nrOfLaps = input()
 
     def get_laps(self):
         return self.nrOfLaps
     
     def set_rois(self):
-        print("[WAIT USER] Choose the general region in which the object can be tracked (cut off unnecessary background).")
+        print("\n[USER INPUT] Choose the general region in which the object can be tracked (cut off unnecessary background).")
         self.newRois.set_single_roi()
-        print("[WAIT USER] Choose where a lap starts/ends.")
+        print("\n[USER INPUT] Choose where a lap starts/ends.")
         self.newRois.set_single_roi()
         self.rois = self.newRois.get_rois()
     
@@ -74,17 +74,17 @@ class MotionTrackerSetup:
         return self.newRois.get_rois()
     
     def set_color(self):
-        print("[WAIT USER] Is the object to track red, blue or green? Type 'r', 'b' or 'g':")
+        print("\n[USER INPUT] What color should be tracked?\n'r' - red\n'b' - blue\n 'g' - green")
         while True:
             key = input()
             if key == "r" or key == "g" or key == "b":
                 self.color = key
                 break
             else:
-                pass
+                print("[MSG] The pressed key is not an option.")
         
     def set_file_name(self):
-        print("[WAIT USER] Please enter the output file name:")
+        print("\n[USER INPUT] Please enter the output file name:")
         self.fileName = input()
 
     def create_test_message(self):
@@ -97,7 +97,6 @@ class MotionTrackerSetup:
             rList.RoiInfo = self.rois[i]
             info.Rois.append(rList)
         self.msg = info
-        print(self.msg)
     
     def publish_info(self):
         self.create_test_message()

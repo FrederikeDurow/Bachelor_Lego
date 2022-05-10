@@ -13,6 +13,7 @@ sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Leg
 from Classes import BoundingBox 
 from Classes import DataFile
 from Classes import VideoSaver
+from Classes import MalfunctionVideoSaver
 
 class ActivationTest:
     
@@ -23,7 +24,9 @@ class ActivationTest:
         self.current_frame = None
         self.called = 0 
         self.img = None
-        self.video_started = False
+        self.first_lap_run = False
+        self.testVideo = 0
+        self.path = None
 
         #self.testStarted = False
         self.nrOfLaps = None
@@ -52,6 +55,10 @@ class ActivationTest:
         #Create subscriber to Setup Node
         self.setupSub = rospy.Subscriber("ActivationTest", ProjectInfo, self.setupCallback)
 
+
+        self.rate = rospy.Rate(1)
+        self.roboService = rospy.ServiceProxy("RunNextLap", Robo)
+
         
 
 ### SETUP #############################################################################################################
@@ -59,9 +66,9 @@ class ActivationTest:
         if self.current_frame is not None:
             self.file_name = data.FileName
             self.nrOfLaps = data.Lap
+            self.testVideo = data.TestVideo
+            self.path = data.DataPath
             cnt = 0
-            # for i in range(len(data.Rois)):
-            #     self.malfunctions.append(0)
             for roi in data.Rois:
                 self.malfunctions.append(0)
                 temp_roi = []
@@ -69,9 +76,9 @@ class ActivationTest:
                     temp_roi.append(roi.RoiInfo[element])
                 self.rois.append(temp_roi)
                 cnt += 1
-            print(self.rois)
             self.setup_datafile()
             self.setupSub.unregister()
+            
             self.start_test()
     
     def setup_datafile(self):
@@ -84,10 +91,11 @@ class ActivationTest:
     def start_test(self):
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
-        self.VS = VideoSaver.VideoSaver(self.file_name)
+        if self.testVideo == True:
+            self.testVS = VideoSaver.VideoSaver(self.file_name)
+        self.malVS = MalfunctionVideoSaver.MalfunctionVideoSaver(self.path)
         self.get_control_data()
-        #self.process_control_data(bb_data)
-        self.test_started = True                                          
+        self.test_started = True                                        
         self.run_robot(True)
 
     def get_control_data(self):
@@ -114,16 +122,24 @@ class ActivationTest:
         self.h_min = np.mean(h_list) - np.var(h_list)*5
         self.h_max = np.mean(h_list) + np.var(h_list)*5
     
+    def before_first_lap(self):
+        print("\n[MSG] Setup is completed.")
+        print("\n[MSG] Test is running, don't shutdown computer.")  
+        # self.malVS.start_recording()
+        if self.testVideo == True:
+            self.testVS.start_recording()
+        self.first_lap_run = True
+
     def run_robot(self, request):
         #Create service to Robot
         rospy.wait_for_service("RunNextLap")
-        if self.video_started == False:
-            self.VS.start_recording()
-            self.video_started == True
-        self.rate = rospy.Rate(1)
-        roboService = rospy.ServiceProxy("RunNextLap", Robo)
-        roboService(request)
+        if self.first_lap_run == False:
+            self.before_first_lap()
+        # self.rate = rospy.Rate(1)
+        # roboService = rospy.ServiceProxy("RunNextLap", Robo)
+        self.roboService(request)
         if request == True:
+            self.malVS.start_recording("Lap"+str(self.lapCounter))
             self.roboCallback()
             self.rate.sleep()
         else:
@@ -152,7 +168,9 @@ class ActivationTest:
         if self.called == 0:
             self.called = 1
             self.lapCounter += 1
-            print("Laps run:" + str(self.lapCounter))
+            sys.stdout.write("\r")
+            sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+            sys.stdout.flush()
             self.get_data()
             self.process_data()
             if self.lapCounter == self.nrOfLaps:                                                
@@ -185,12 +203,9 @@ class ActivationTest:
         
 
     def check_position(self):
-        # print("Control Positions:")
-        # print(self.control_positions)
         for i in range(len(self.rois)):
             x,y = self.control_positions[i]
             x_new,y_new,_,_ = self.temp_data[i]
-            # print("Roi nr " + str(i)+ " x: " +str(x_new) +", y: "+ str(y_new))
             if x_new in range(x-self.x_buffer, x+self.x_buffer):
                 if y_new in range(y-self.y_buffer, y+self.y_buffer):
                     self.result.append(1)
@@ -198,25 +213,30 @@ class ActivationTest:
                     self.result.append(0)
             else:
                 self.result.append(0)
-        #print(self.result)
+      
        
     def check_size(self):
-        # print("Control w_min: " + str(self.w_min) + ", w_max: " + str(self.w_max))
-        # print("Control h_min: " + str(self.h_min) + ", h_max: " + str(self.h_max))
         for i in range(len(self.rois)):
             _,_,w,h = self.temp_data[i]
-            # print("Roi nr " + str(i)+ " w: " +str(w) +", h: "+ str(h))
             if (w not in range(int(self.w_min), int(self.w_max))) or (h not in range(int(self.h_min), int(self.h_max))):
                 self.result[i]= 0
 
     def update_malfunctions(self):
+        malfunction_occured = False
         for i in range(len(self.rois)):
             if self.result[i] == 0 and self.malfunctions[i] == 0:
                 self.malfunctions[i] = self.lapCounter
+                malfunction_occured = True
+        self.malVS.save_video()
+        if malfunction_occured == False:
+            self.malVS.delete_video()
+        self.malVS.stop_recording()
 
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
-        self.VS.stop_recording()
+        if self.testVideo == True:
+            self.testVS.stop_recording()
+        #self.malVS.stop_recording()
         self.save_data()
         print("The test has been completed and the data is saved.")
         #Stop all subscriptions, publisher and windows

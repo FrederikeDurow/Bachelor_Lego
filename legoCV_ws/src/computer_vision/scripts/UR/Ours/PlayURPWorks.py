@@ -26,6 +26,7 @@ def establish_connection():
                     ROBOT_IP = input("[WAIT USER] Enter IP-address of Robot: ")
 
     if robot_dash.isConnected():
+        print('\n[INFO] Program is now connected to:')
         print('[INFO] Robot Model:' + str(robot_dash.getRobotModel()))
         print('[INFO] Serial Number:' + str(robot_dash.getSerialNumber()))
         print('\n[MSG] Connection to Dashboard is live!')
@@ -51,7 +52,7 @@ def check_robot_mode(connected_UR):
         print('\n[MSG] Releasing brakes')
         robot_dash.brakeRelease()
         time.sleep(4.0)
-        print("[MSG] Robot is ready for operation \n")
+        print("\n[MSG] Robot is ready for operation \n")
 
     return robot_dash
 
