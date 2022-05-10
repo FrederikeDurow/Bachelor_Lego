@@ -18,11 +18,11 @@ class obj_color_dectector():
     # data_green = []
     # data_blue = []
 
-    red_lower = np.array([0, 163, 28], np.uint8)
-    red_upper = np.array([19, 255, 255], np.uint8)
+    red_lower = np.array([136, 87, 111], np.uint8)
+    red_upper = np.array([180, 255, 255], np.uint8)
     
-    green_lower = np.array([35, 219, 36], np.uint8)
-    green_upper = np.array([80, 255, 255], np.uint8)
+    green_lower = np.array([25, 52, 72], np.uint8)
+    green_upper = np.array([102, 255, 255], np.uint8)
 
     blue_lower = np.array([94, 80, 2], np.uint8)
     blue_upper = np.array([120, 255, 255], np.uint8)
