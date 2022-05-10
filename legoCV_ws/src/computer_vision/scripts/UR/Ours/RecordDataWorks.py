@@ -133,7 +133,7 @@ def record_data(counter, frequency):
 
 def data_to_output():
     
-    available_data = ['timestamp','actual_TCP_pose','actual_TCP_force']
+    available_data = ['timestamp','actual_execution_time','actual_TCP_pose','actual_TCP_speed','actual_TCP_force','runtime_state']
     data_output = []
 
     #print("[INFO] See the guide from Vister for the enabling of wanted data \n")
