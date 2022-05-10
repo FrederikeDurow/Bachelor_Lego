@@ -1,5 +1,4 @@
 import cv2
-from cv2 import boundingRect
 import numpy as np
 
 
@@ -60,9 +59,9 @@ class obj_color_dectector():
         else:
             print("Use HSV_Trackbar to set upper and lower bounds")
 
-    def HSV_Trackbar(self):
+    def HSV_Trackbar(self, frame):
 
-        frame = cv2.imread('Red.png')
+        self.frame = frame
 
         cv2.namedWindow('frame')
 
