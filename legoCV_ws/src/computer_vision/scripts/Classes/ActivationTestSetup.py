@@ -35,6 +35,7 @@ class ActivationTestSetup:
         
 
     def callback(self,data):
+        print("callback for image")
         bridge = CvBridge()
         try:
             self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
