@@ -7,26 +7,20 @@ Item {
     height: 1080
 
 
-
-
-
-    Screen01 {
-        id: screen01
-        x: 0
-        y: 0
-
         Progressbar {
             id: progressbar
             x: 120
             y: 952
+            timelineCurrentFrame: 1
         }
-    }
+
     states: [
         State {
             name: "Activation_Test_state"
         },
         State {
             name: "Motion_Traking_Test_state"
+
         }
     ]
     Play_button {
@@ -132,6 +126,22 @@ Item {
             y: 93
             controlChecked: true
         }
+
+        Toggle {
+            id: toggle4
+            x: 250
+            y: 344
+            controlChecked: true
+        }
+
+        Text {
+            id: text9
+            x: 345
+            y: 823
+            color: "#ffffff"
+            text: qsTr("Record Malfunctions")
+            font.pixelSize: 12
+        }
     }
 
     Image {
@@ -191,7 +201,7 @@ Item {
 
     Image {
         id: line48
-        x: 339
+        x: 469
         y: 815
         source: "../../Components/Testing_view/Line 48.png"
         fillMode: Image.PreserveAspectFit
@@ -214,7 +224,7 @@ Item {
     }
 
     Text {
-        id: text2
+        id: pos_lap_txt
         x: 390
         y: 570
         color: "#ffffff"
@@ -276,6 +286,15 @@ Item {
         font.pixelSize: 10
     }
 
+    Text {
+        id: text10
+        x: 338
+        y: 815
+        color: "#ffffff"
+        text: qsTr("Record Whole Video")
+        font.pixelSize: 12
+    }
+
 
 
 
@@ -286,7 +305,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.5}D{i:18}D{i:19}D{i:20}D{i:23}D{i:25}D{i:29}D{i:31}D{i:32}
-D{i:33}D{i:34}D{i:35}D{i:36}D{i:37}
+    D{i:0;formeditorZoom:1.33}D{i:39}
 }
 ##^##*/

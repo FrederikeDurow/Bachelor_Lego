@@ -5,12 +5,6 @@ Item {
     width: 1920
     height: 1080
 
-    Screen01 {
-        id: screen01
-        x: 0
-        y: 0
-    }
-
     Frame {
         id: frame
         x: 577
@@ -222,14 +216,6 @@ Item {
         fillMode: Image.PreserveAspectFit
     }
 
-    Image {
-        id: rectangle456
-        x: 992
-        y: 742
-        source: "../../Components/Setup_views/Rectangle 456.png"
-        fillMode: Image.PreserveAspectFit
-    }
-
 
 
 
@@ -371,6 +357,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.9}D{i:31}
+    D{i:0;formeditorZoom:0.5}
 }
 ##^##*/

@@ -32,23 +32,28 @@ import QtQuick.Window
 import Vister
 
 Window {
-    width: homeScreen.width
-    height: homeScreen.height
+    width: 1920
+    height: 1080
     opacity: 1
 
     visible: true
     title: "Vister"
-    
-    Screen01 {
-        id: homeScreen
-
-
-    }
 
     HOME_VIEW {
         id: hOME_VIEW
     }
 
+
+
+
+
+
+    Popup {
+        id: popup
+        x: 590
+        y: 340
+        enabled: false
+    }
     View_stages {
         id: view_stages
         x: 0
@@ -56,13 +61,11 @@ Window {
 
 
     }
-
-
 }
 
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.5}
+    D{i:0;formeditorZoom:0.33}
 }
 ##^##*/

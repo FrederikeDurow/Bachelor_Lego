@@ -46,7 +46,7 @@ Item {
 
         Connections {
             target: close_popup
-            onClicked: selectTestingType_item.state ="Unckecked"
+            onClicked: selectTestingType_item.state = "Unckecked"
         }
     }
 
@@ -77,6 +77,9 @@ Item {
         x: 60
         y: 238
         clip: true
+        Connections {
+            target: selectedType
+        }
     }
 
     Text {

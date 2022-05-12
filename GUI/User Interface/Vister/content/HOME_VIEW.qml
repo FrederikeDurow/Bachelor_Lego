@@ -49,7 +49,7 @@ Item {
         y: 577
         Connections {
             target: loadproject_button
-            onClicked: selectTestingType.state = 'Normal'
+            onClicked: popup.state = 'Normal'
         }
     }
 
@@ -71,17 +71,10 @@ Item {
         enabled: false
     }
 
-    Popup {
-        id: popup
-        x: -10
-        y: 392
-    }
 
-    Popup {
-        id: popup1
-        x: 0
-        y: 310
-    }
+
+
+
 
 }
 

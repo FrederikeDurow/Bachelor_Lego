@@ -8,8 +8,7 @@ Item {
     width: Constants.width
     height: Constants.height
 
-
-    Screen01 {
+    StaticElements {
         id: screen01
         x: 0
         y: 0
@@ -133,7 +132,6 @@ Item {
     StackLayout {
         id: stackLayout
         width: 100
-        anchors.top: tabBar.bottom
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.bottom: parent.bottom
