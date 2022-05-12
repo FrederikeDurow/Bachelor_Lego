@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   message_generation
 )
-
+catkin_python_setup()
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -169,7 +169,6 @@ include_directories(
    scripts/Nodes/ur_node.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
-
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 # install(TARGETS ${PROJECT_NAME}_node

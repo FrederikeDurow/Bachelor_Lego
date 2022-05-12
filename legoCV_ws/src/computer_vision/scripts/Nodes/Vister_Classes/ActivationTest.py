@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 from cv2 import imwrite
 import rospy
-import sys
+import sys, os
 import cv2
 import numpy as np
 from sensor_msgs.msg import Image
 from computer_vision.msg import ProjectInfo
 from computer_vision.srv import Robo
 from cv_bridge import CvBridge, CvBridgeError
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
 
-sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
-from Classes import BoundingBox 
-from Classes import DataFile
-from Classes import VideoSaver
-from Classes import MalfunctionVideoSaver
+#sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+import BoundingBox 
+import DataFile
+import VideoSaver
+import MalfunctionVideoSaver
 
 class ActivationTest:
     

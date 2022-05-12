@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 import rospy
 import cv2
-import sys
+import sys,os
 import numpy as np
 from sensor_msgs.msg import Image
 from std_msgs.msg import Bool
 from cv_bridge import CvBridge, CvBridgeError
-sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
-from Classes import ROIs
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
+#sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+import ROIs
 from computer_vision.msg import ProjectInfo
 from computer_vision.msg import RoiList
 

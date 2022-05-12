@@ -1,10 +1,12 @@
-import sys
+import sys,os
 import rospy
 from computer_vision.srv import Robo, RoboResponse
 from std_msgs.msg import Bool
-sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+#sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import rtde_io
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
 from UR import UR_connection as UR_con
 from UR import UR_record as UR_rec
 import time
