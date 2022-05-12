@@ -30,6 +30,7 @@ class MotionTrackerSetup:
         self.color = None
         self.hsv_low = []
         self.hsv_up = []
+        self.state = 0
         
         #Initializations for Regions of Interest
         self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
