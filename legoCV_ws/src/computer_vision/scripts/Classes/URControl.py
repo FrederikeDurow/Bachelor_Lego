@@ -5,8 +5,8 @@ from std_msgs.msg import Bool
 sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import rtde_io
-from UR.Ours import PlayURPWorks as PURP
-from UR.Ours import RecordDataWorks as record
+from UR import UR_connection as UR_con
+from UR import UR_record as UR_rec
 import time
 
 class ur_robot:
@@ -19,11 +19,11 @@ class ur_robot:
             pass
             
         self.counter = 0
-        self.robot_dash, self.ip = PURP.establish_connection()
-        PURP.check_robot_mode(self.robot_dash)
-        PURP.loadURscript(self.robot_dash)
+        self.robot_dash, self.ip = UR_con.establish_connection()
+        UR_con.check_robot_mode(self.robot_dash)
+        UR_con.loadURscript(self.robot_dash)
 
-        self.data_to_record, self.output_file = record.data_to_output()
+        self.data_to_record, self.output_file = UR_rec.data_to_output()
         self.frequency = float(input("[WAIT USER] Insert frequency of data saving (default = 500): "))
         self.robot_recive = RTDEReceive(self.ip,self.frequency)
         self.rtde_in_out =rtde_io.RTDEIOInterface(self.ip)
@@ -36,7 +36,7 @@ class ur_robot:
 
     def record(self):
         while self.robot_dash.isConnected() == True:
-                self.counter = record.record_data(self.counter, self.frequency)                         #SKAL ÆNDRES, så den direkte bruger self.counter 
+                self.counter = UR_rec.record_data(self.counter, self.frequency)                         #SKAL ÆNDRES, så den direkte bruger self.counter 
 
     def callback(self, request):
         if request.start == True:
@@ -63,7 +63,7 @@ class ur_robot:
                     self.robot_dash.play()
                     time.sleep(2.0)
                 else:
-                    self.counter = record.record_data(self.counter, self.frequency)
+                    self.counter = UR_rec.record_data(self.counter, self.frequency)
                    
             self.robot_dash.pause()
             #print("\n[MSG] Waiting for start running signal\n")

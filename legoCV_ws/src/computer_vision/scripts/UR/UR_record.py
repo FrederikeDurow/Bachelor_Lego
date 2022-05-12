@@ -1,4 +1,3 @@
-from matplotlib.style import available
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import time
 import sys
