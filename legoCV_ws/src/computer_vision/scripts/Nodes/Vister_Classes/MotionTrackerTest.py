@@ -2,17 +2,19 @@
 from matplotlib.pyplot import draw
 import rospy
 import cv2
-import sys
+import sys,os
 import time
 import numpy as np
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 from computer_vision.msg import ProjectInfo
-sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
-from Classes import DataFile
-from Classes import Object_Color_Detector
-from Classes import CentroidTracker
-from Classes import VideoSaver
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
+#sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+import DataFile
+import Object_Color_Detector
+import CentroidTracker
+import VideoSaver
 from collections import OrderedDict
 
 
@@ -55,15 +57,17 @@ class MotionTracker:
 
 ### SETUP #############################################################################################################
     def setupCallback(self, data):
-        print("Setup data recieved")
         self.unpack_message(data)
         self.setupSub.unregister()
+        print("\n[MSG] Setup is completed.")
         self.start_test()
         
     def unpack_message(self, data):
         self.file_name = data.FileName
         self.nrOfLaps = data.Lap
-        self.color = data.Color
+        #self.color = data.Color
+        self.hsv_low = data.HSV_lower
+        self.hsv_up = data.HSV_upper
         cnt = 0
         for roi in data.Rois:
             temp_roi = []
@@ -81,6 +85,7 @@ class MotionTracker:
         self.setup_datafile()
         self.update_timer()
         self.test_started = True
+        print("\n[MSG] Test is running, don't shutdown computer.")  
 
     def setup_datafile(self):
         header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
@@ -105,7 +110,7 @@ class MotionTracker:
                 self.stop_test()
             self.prep_image()
             
-            self.detections = self.detector.applyColorDectector(self.crop_img, self.color, 200)
+            self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
             self.objects = self.tracker.update(self.detections)
             self.draw_id()
             cv2.rectangle(self.crop_img, (self.lap_roi[0],self.lap_roi[1]), (self.lap_roi[0]+self.lap_roi[2], self.lap_roi[1]+self.lap_roi[3]), (0,255,0), 2)
@@ -161,7 +166,9 @@ class MotionTracker:
             self.lapCounter += 1
             self.update_timer()
             self.save_data()
-            print("Nr of Laps: " + str(self.lapCounter))
+            sys.stdout.write("\r")
+            sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+            sys.stdout.flush()
         
 
     def update_timer(self):
@@ -175,7 +182,7 @@ class MotionTracker:
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
         self.VS.stop_recording()
-        print("The test has been completed and the data is saved.")
+        print("\n[MSG] The test has been completed and the data is saved.")
         self.camSub.unregister()
         cv2.destroyAllWindows()
 

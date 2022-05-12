@@ -17,34 +17,34 @@ class ROIs:
         return self.rois
 
     def set_multi_rois(self):
-        print("Select region by clicking on its upper left corner followed by lower right corner.")
+        print("Select a region by clicking on its upper left corner followed by lower right corner.")
         cv2.setMouseCallback(self.window_name, self.add_roi)
         while True: 
             if self.roi_chosen == True:
-                key = input("Press 'd' to delete the last ROI, 'r' to select another ROI or 's' to save chosen ROIs\n")
+                key = input("\n[USER INPUT] Do you want to:\n'd' - delete last region\n'r' - select another region \n's' - save chosen regions\n")
                 if key == "d":
                     self.rois.pop()
                 elif key == "r":
                     self.roi_added = 0
                     self.roi_chosen = False
-                    print("Please select the next ROI")
+                    print("\n[MSG] Please select the next region.")
                 elif key == "s":
                     break
                 else:
                     pass
 
     def set_single_roi(self):
-        print("Select region by clicking on its upper left corner followed by lower right corner.")
+        print("Select a region by clicking on its upper left corner followed by lower right corner.")
         cv2.setMouseCallback(self.window_name, self.add_roi)
         while True: 
             if self.roi_chosen == True:
-                key = input("Press 'd' to delete the last ROI or 's' to save it\n")
+                key = input("\n[USER INPUT] Do you want to:\n'd' - delete last region\n's' - save chosen region\n")
                 if key == "d":
                     self.rois.pop()
                 elif key == "s":
                     break
                 else:
-                    pass
+                    print("[MSG] The pressed key is not an option.")
 
     def add_roi(self, event,x,y,flags,*params):
         if (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 0):
