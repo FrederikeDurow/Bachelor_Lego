@@ -21,7 +21,7 @@ class MotionTrackerSetup:
         #Initializations for Camera Stream
         self.current_frame = None
         self.windowName = "Motion Tracker Test"
-        #self.sub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.callback)
+        self.sub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.callback)
         
         #Initializations for Test Info
         self.nrOfLaps = 0
@@ -37,116 +37,29 @@ class MotionTrackerSetup:
 
         #Initialization of message
         self.msg = None
-        self.trackbar = False
-        
-    # def callback(self):#############################################################################################################################################3
-    # #def callback(self,data):
-    #     print("in MT Callback")
-    #     cap = cv2.VideoCapture(0)
-    #     ret, frame = cap.read()
-    #     cv2.imshow("webcam", frame)
-    #     cv2.waitKey(1)
-    #     #if ret is True: 
-    #     #uncomment next 6 lines when deleting videoCapture
-    #     # bridge = CvBridge()
-    #     # try:
-    #     #     self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
-    #     # except CvBridgeError as e:
-    #     #     print(e)
-    #     # self.current_frame = self.newRois.draw_rois(self.current_frame)
+        self.trackbar = "Not Started"
+        self.firstImage = 1
+        self.createTrackbars = 0
         
         
-    #     # cv2.namedWindow(self.windowName)
-    #     # cv2.imshow(self.windowName, self.current_frame)
-    #     # #cv2.imshow('frame', self.current_frame)
-    #     # cv2.waitKey(10)
+    def callback(self, data):
+        cv2.namedWindow(self.windowName,cv2.WINDOW_NORMAL)
 
-    #     if self.trackbar == True:
-            
-    #         cv2.namedWindow(self.windowName)
-    #         self.trackbar = False
-    #         # Create trackbars for color change
-    #         # Hue is from 0-179 for Opencv
-    #         cv2.createTrackbar('Hue_Min', self.windowName, 0, 179, nothing)
-    #         cv2.createTrackbar('Sat_Min', self.windowName, 0, 255, nothing)
-    #         cv2.createTrackbar('Val_Min', self.windowName, 0, 255, nothing)
-    #         cv2.createTrackbar('Hue_Max', self.windowName, 0, 179, nothing)
-    #         cv2.createTrackbar('Sat_Max', self.windowName, 0, 255, nothing)
-    #         cv2.createTrackbar('Val_Max', self.windowName, 0, 255, nothing)
+        bridge = CvBridge()
+        try:
+            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+        except CvBridgeError as e:
+            print(e)
+        self.current_frame = self.newRois.draw_rois(self.current_frame)
+        if self.trackbar == "Not running":
+            cv2.imshow(self.windowName, self.current_frame)
+            cv2.waitKey(1)
+        elif self.trackbar == "Running":
+            self.set_HSV()
+            pass
 
-    #         # Set default value for Max HSV trackbars
-    #         cv2.setTrackbarPos('Hue_Max', self.windowName, 179)
-    #         cv2.setTrackbarPos('Sat_Max', self.windowName, 255)
-    #         cv2.setTrackbarPos('Val_Max', self.windowName, 255)
-
-    #         # Initialize HSV min/max values
-    #         hMin = sMin = vMin = hMax = sMax = vMax = 0
-    #         phMin = psMin = pvMin = phMax = psMax = pvMax = 0
-    #         #frame = self.current_frame                                 ###################################################################################
-            
-                    
-    #         while(True):
-    #             ret, frame = cap.read()
-                
-    #             if cap.open(0) and ret == True:
-    #                 # cv2.imshow("webcam", frame)
-    #                 # cv2.waitKey(1)
-    #                 #cv2.imshow("current frame", self.current_frame)
-    #                 frame = self.current_frame
-    #                 # Get current positions of all trackbars
-    #                 hMin = cv2.getTrackbarPos('Hue_Min', self.windowName)
-    #                 sMin = cv2.getTrackbarPos('Sat_Min', self.windowName)
-    #                 vMin = cv2.getTrackbarPos('Val_Min', self.windowName)
-    #                 hMax = cv2.getTrackbarPos('Hue_Max', self.windowName)
-    #                 sMax = cv2.getTrackbarPos('Sat_Max', self.windowName)
-    #                 vMax = cv2.getTrackbarPos('Val_Max', self.windowName)
-
-    #                 # Set minimum and maximum HSV values to display
-    #                 self.HSV_lower = np.array([hMin, sMin, vMin])
-    #                 self.HSV_upper = np.array([hMax, sMax, vMax])
-
-    #                 # Convert to HSV format and color threshold
-    #                 hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    #                 mask = cv2.inRange(hsv, self.HSV_lower, self.HSV_upper)
-    #                 result = cv2.bitwise_and(frame, frame, mask=mask)
-
-    #                 # Print if there is a change in HSV value
-    #                 if((phMin != hMin) | (psMin != sMin) | (pvMin != vMin) | (phMax != hMax) | (psMax != sMax) | (pvMax != vMax) ):
-    #                     print("(hMin = %d , sMin = %d, vMin = %d), (hMax = %d , sMax = %d, vMax = %d)" % (hMin , sMin , vMin, hMax, sMax , vMax))
-    #                     phMin = hMin
-    #                     psMin = sMin
-    #                     pvMin = vMin
-    #                     phMax = hMax
-    #                     psMax = sMax
-    #                     pvMax = vMax
-
-    #                 # Display result image
-    #                 cv2.imshow('frame', result)
-    #                 print("\n[USER INPUT] Press 's' to save chosen threshold")
-    #                 # if key == "d":
-    #                 #     self.rois.pop()
-    #                 # elif key == "s":
-    #                 #     break
-    #                 if cv2.waitKey(10) & 0xFF == ord('s'):
-    #                     cv2.destroyAllWindows()
-    #                     self.hsv_low= self.HSV_lower
-    #                     self.hsv_up = self.HSV_upper
-    
-    def callback(self):#############################################################################################################################################3
-    #def callback(self,data):
-    #uncomment next 6 lines when deleting videoCapture
-        # bridge = CvBridge()
-        # try:
-        #     self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
-        # except CvBridgeError as e:
-        #     print(e)
-        # self.current_frame = self.newRois.draw_rois(self.current_frame)
-        print("in MT Callback")
-        cap = cv2.VideoCapture(0)
-        if self.trackbar == True:
-            
-            cv2.namedWindow(self.windowName)
-            self.trackbar = False
+    def set_HSV(self):
+        if self.createTrackbars == 1:
             # Create trackbars for color change
             # Hue is from 0-179 for Opencv
             cv2.createTrackbar('Hue_Min', self.windowName, 0, 179, nothing)
@@ -164,56 +77,48 @@ class MotionTrackerSetup:
             # Initialize HSV min/max values
             hMin = sMin = vMin = hMax = sMax = vMax = 0
             phMin = psMin = pvMin = phMax = psMax = pvMax = 0
-            #frame = self.current_frame                                 ###################################################################################
             print("\n[USER INPUT] Press 's' to save chosen threshold")
-            
-            ret, frame = cap.read()
-            if ret == True:
-                cv2.imshow(self.windowName, frame)
-                cv2.waitKey(1)
-                while True: 
-                    ret, frame = cap.read()
-                # if ret == True:
-                #     cv2.imshow(self.windowName, frame)
-                #     cv2.waitKey(1)
-                    # Get current positions of all trackbars
-                    hMin = cv2.getTrackbarPos('Hue_Min', self.windowName)
-                    sMin = cv2.getTrackbarPos('Sat_Min', self.windowName)
-                    vMin = cv2.getTrackbarPos('Val_Min', self.windowName)
-                    hMax = cv2.getTrackbarPos('Hue_Max', self.windowName)
-                    sMax = cv2.getTrackbarPos('Sat_Max', self.windowName)
-                    vMax = cv2.getTrackbarPos('Val_Max', self.windowName)
+            self.createTrackbars = 0
     
-                    # Set minimum and maximum HSV values to display
-                    self.HSV_lower = np.array([hMin, sMin, vMin])
-                    self.HSV_upper = np.array([hMax, sMax, vMax])
+        else:
+            hMin = cv2.getTrackbarPos('Hue_Min', self.windowName)
+            sMin = cv2.getTrackbarPos('Sat_Min', self.windowName)
+            vMin = cv2.getTrackbarPos('Val_Min', self.windowName)
+            hMax = cv2.getTrackbarPos('Hue_Max', self.windowName)
+            sMax = cv2.getTrackbarPos('Sat_Max', self.windowName)
+            vMax = cv2.getTrackbarPos('Val_Max', self.windowName)
 
-                    # Convert to HSV format and color threshold
-                    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-                    mask = cv2.inRange(hsv, self.HSV_lower, self.HSV_upper)
-                    result = cv2.bitwise_and(frame, frame, mask=mask)
+            # Set minimum and maximum HSV values to display
+            self.HSV_lower = np.array([hMin, sMin, vMin])
+            self.HSV_upper = np.array([hMax, sMax, vMax])
 
-                    # # Print if there is a change in HSV value
-                    # if((phMin != hMin) | (psMin != sMin) | (pvMin != vMin) | (phMax != hMax) | (psMax != sMax) | (pvMax != vMax) ):
-                    #     print("(hMin = %d , sMin = %d, vMin = %d), (hMax = %d , sMax = %d, vMax = %d)" % (hMin , sMin , vMin, hMax, sMax , vMax))
-                    #     phMin = hMin
-                    #     psMin = sMin
-                    #     pvMin = vMin
-                    #     phMax = hMax
-                    #     psMax = sMax
-                    #     pvMax = vMax
+            # Convert to HSV format and color threshold
+            hsv = cv2.cvtColor(self.current_frame, cv2.COLOR_BGR2HSV)
+            mask = cv2.inRange(hsv, self.HSV_lower, self.HSV_upper)
+            result = cv2.bitwise_and(self.current_frame, self.current_frame, mask=mask)
 
-                    # Display result image
-                    cv2.imshow(self.windowName, result)
+            # # Print if there is a change in HSV value
+            # if((phMin != hMin) | (psMin != sMin) | (pvMin != vMin) | (phMax != hMax) | (psMax != sMax) | (pvMax != vMax) ):
+            #     print("(hMin = %d , sMin = %d, vMin = %d), (hMax = %d , sMax = %d, vMax = %d)" % (hMin , sMin , vMin, hMax, sMax , vMax))
+            #     phMin = hMin
+            #     psMin = sMin
+            #     pvMin = vMin
+            #     phMax = hMax
+            #     psMax = sMax
+            #     pvMax = vMax
 
-                    k = cv2.waitKey(1) & 0xFF
-                    if k == ord('s'):
-                        self.hsv_low= self.HSV_lower
-                        self.hsv_up = self.HSV_upper
-                        cv2.destroyAllWindows()
-                        break
-                    else:
-                        pass
+            # Display result image
+            cv2.imshow(self.windowName, result)
+
+            k = cv2.waitKey(1) & 0xFF
+            if k == ord('s'):
+                self.trackbar = "Not running"
+                self.hsv_low= self.HSV_lower
+                self.hsv_up = self.HSV_upper
+                cv2.destroyAllWindows()
+                #break
+            else:
+                pass
 
             
 
@@ -223,14 +128,15 @@ class MotionTrackerSetup:
         self.current_frame = cv2.undistort(self.current_frame, cMat, dist, None)
 
     def set_test_info(self):###########################################################################################################################################################33
-        print("set info works")
-        self.trackbar = True
-        self.callback()
-        # # self.set_hsv_thresh()
+        self.trackbar = "Running"
+        self.createTrackbars = 1
+        #self.callback()
+        #self.set_HSV()
         # self.set_laps()
         # self.set_rois()
         # # self.set_color()
         # self.set_file_name()
+
         
     
     def set_hsv_thresh(self):
@@ -283,7 +189,7 @@ class MotionTrackerSetup:
     
     def publish_info(self):
         self.create_test_message()
-        testPub = rospy.Publisher("MotionTracking", ProjectInfo)
+        testPub = rospy.Publisher("MotionTracking", ProjectInfo, queue_size=10)
         rate = rospy.Rate(10) #10Hz
         self.sub.unregister()
         while not rospy.is_shutdown():

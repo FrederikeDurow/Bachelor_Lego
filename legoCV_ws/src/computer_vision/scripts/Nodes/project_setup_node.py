@@ -22,7 +22,7 @@ def main():
     else:
         newProject = MotionTrackerSetup.MotionTrackerSetup()
     newProject.set_test_info()
-    newProject.publish_info()
+    #newProject.publish_info()
     rospy.spin()
 
 if __name__ == '__main__':
