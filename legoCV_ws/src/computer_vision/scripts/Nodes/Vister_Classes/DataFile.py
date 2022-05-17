@@ -1,9 +1,11 @@
 import csv
+import os
 
 class DataFile:
-    def __init__(self, name, header):  
-        self.file_name = name
-        with open((self.file_name+ ".csv"), 'w', encoding='UTF8', newline='') as f:      
+    def __init__(self, name, path, header):  
+        self.file_name = name+ ".csv"
+        self.path = path
+        with open(os.path.join(self.path,self.file_name), 'w', encoding='UTF8', newline='') as f:      
             writer = csv.writer(f)
 
             # write the header
@@ -27,7 +29,7 @@ class DataFile:
     #         f.close()
 
     def save_data(self,data):
-        with open((self.file_name + ".csv"), 'a', encoding='UTF8', newline='') as f:      
+        with open(os.path.join(self.path,self.file_name), 'a', encoding='UTF8', newline='') as f:      
             writer = csv.writer(f)
             # write data row
             writer.writerow(data)

@@ -7,7 +7,7 @@ import time
 import numpy as np
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-from computer_vision.msg import ProjectInfo
+from computer_vision.msg import MotionTrackerInfo
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
 #sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
@@ -35,6 +35,7 @@ class MotionTracker:
         self.detections = []
         self.crop_img = None
         self.objects = OrderedDict()
+        self.path = None
 
         #For Tracker
         self.position = True
@@ -46,7 +47,7 @@ class MotionTracker:
         self.color = None
 
         #Create subscriber to Setup Node
-        self.setupSub = rospy.Subscriber("MotionTracking", ProjectInfo, self.setupCallback)
+        self.setupSub = rospy.Subscriber("MotionTracking", MotionTrackerInfo, self.setupCallback)
 
         #Create subscriber to camera
         self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
@@ -65,7 +66,7 @@ class MotionTracker:
     def unpack_message(self, data):
         self.file_name = data.FileName
         self.nrOfLaps = data.Lap
-        #self.color = data.Color
+        self.path = data.DataPath
         self.hsv_low = data.HSV_lower
         self.hsv_up = data.HSV_upper
         cnt = 0
@@ -80,7 +81,7 @@ class MotionTracker:
                 self.lap_roi = [temp_roi[0]-self.total_roi[0],temp_roi[1]-self.total_roi[1], temp_roi[2], temp_roi[3]] 
 
     def start_test(self):
-        self.VS = VideoSaver.VideoSaver(self.file_name)
+        self.VS = VideoSaver.VideoSaver(self.file_name, self.path)
         self.VS.start_recording()
         self.setup_datafile()
         self.update_timer()
@@ -88,9 +89,10 @@ class MotionTracker:
         print("\n[MSG] Test is running, don't shutdown computer.")  
 
     def setup_datafile(self):
+        # header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
+        # self.lapFile = DataFile.DataFile(self.file_name,self.path,header)
         header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
-        self.lapFile = DataFile.DataFile(self.file_name,header)
-        self.lapFile
+        self.lapFile = DataFile.DataFile(self.file_name,self.path,header)
 
 ### STARTING ##########################################################################################################
     # def start_test(self):
@@ -141,8 +143,6 @@ class MotionTracker:
 
     def draw_id(self):
         if self.objects is not None:
-            # print("Objects: " + str(len(objects)))
-            # print("Recs: " + str(len(rects)))
             for (objectID, centroid) in self.objects.items():
                 text = "ID {}".format(objectID)
                 cv2.putText(self.crop_img, text, (centroid[0]-10, centroid[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0),2)

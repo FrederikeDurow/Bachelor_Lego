@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 import rospy
 import cv2
+import os
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
 
 class VideoSaver:
 
-    def __init__(self, fileName):
+    def __init__(self, fileName, path):
         self.cvimg = None
+        self.path = path
         self.testStatus = "Waiting"
 
         #Create subscriber to Camera
@@ -16,7 +18,7 @@ class VideoSaver:
 
         #Create Video Writer
         fourcc = cv2.VideoWriter_fourcc(*'MPEG')
-        self.out = cv2.VideoWriter(fileName+'.avi', fourcc, 24, (1440,1080),1)
+        self.out = cv2.VideoWriter(os.path.join(self.path,fileName,'.avi'), fourcc, 24, (1440,1080),1)
 
     def camCallback(self, data):
         if self.testStatus == "Running":

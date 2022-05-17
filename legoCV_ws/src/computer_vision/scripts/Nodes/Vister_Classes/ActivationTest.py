@@ -5,7 +5,7 @@ import sys, os
 import cv2
 import numpy as np
 from sensor_msgs.msg import Image
-from computer_vision.msg import ProjectInfo
+from computer_vision.msg import ActivationTestInfo
 from computer_vision.srv import Robo
 from cv_bridge import CvBridge, CvBridgeError
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -55,7 +55,7 @@ class ActivationTest:
         self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
         
         #Create subscriber to Setup Node
-        self.setupSub = rospy.Subscriber("ActivationTest", ProjectInfo, self.setupCallback)
+        self.setupSub = rospy.Subscriber("ActivationTest", ActivationTestInfo, self.setupCallback)
 
 
         self.rate = rospy.Rate(1)
@@ -66,35 +66,48 @@ class ActivationTest:
 ### SETUP #############################################################################################################
     def setupCallback(self, data):
         if self.current_frame is not None:
-            self.file_name = data.FileName
-            self.nrOfLaps = data.Lap
-            self.testVideo = data.TestVideo
-            self.path = data.DataPath
-            cnt = 0
-            for roi in data.Rois:
-                self.malfunctions.append(0)
-                temp_roi = []
-                for element in range(len(roi.RoiInfo)):
-                    temp_roi.append(roi.RoiInfo[element])
-                self.rois.append(temp_roi)
-                cnt += 1
+            self.unpack_message(data)
             self.setup_datafile()
             self.setupSub.unregister()
-            
             self.start_test()
-    
+
+    def unpack_message(self,data):
+        self.file_name = data.FileName
+        self.nrOfLaps = data.Lap
+        self.testVideo = data.TestVideo
+        self.path = data.DataPath
+        cnt = 0
+        for roi in data.Rois:
+            self.malfunctions.append(0)
+            temp_roi = []
+            for element in range(len(roi.RoiInfo)):
+                temp_roi.append(roi.RoiInfo[element])
+            self.rois.append(temp_roi)
+            cnt += 1
+
     def setup_datafile(self):
         header = [' ']
         for r in range(len(self.rois)):
             header.append('Object'+str(r+1))                                                                 
-        self.malfunctionFile = DataFile.DataFile(self.file_name,header)
+        self.malfunctionFile = DataFile.DataFile(self.file_name,self.path, header)
+    
+    def setup_testfile(self):
+        newFileName = self.file_name + "_test"
+        header = [' ']
+        for r in range(len(self.rois)):
+            header.append('Object'+str(r+1))
+            header.append('X'+str(r+1))
+            header.append('Y'+str(r+1))
+            header.append('W'+str(r+1))
+            header.append('H'+str(r+1))                                                                 
+        self.testFile = DataFile.DataFile(newFileName,self.path, header)
 
 ### STARTING ##########################################################################################################
     def start_test(self):
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
         if self.testVideo == True:
-            self.testVS = VideoSaver.VideoSaver(self.file_name)
+            self.testVS = VideoSaver.VideoSaver(self.file_name, self.path)
         self.malVS = MalfunctionVideoSaver.MalfunctionVideoSaver(self.path)
         self.get_control_data()
         self.test_started = True                                        
@@ -200,6 +213,7 @@ class ActivationTest:
     
     def process_data(self):
         #self.BB.get_data()
+        self.save_testdata()
         self.check_position()
         self.check_size()
         self.update_malfunctions()
@@ -231,12 +245,22 @@ class ActivationTest:
             if self.result[i] == 0 and self.malfunctions[i] == 0:
                 self.malfunctions[i] = self.lapCounter
                 malfunction_occured = True
-        #if self.
+      
         self.malVS.stop_recording()
-        #self.malVS.save_video()
+      
         if malfunction_occured == False:
             print("trying to delete video")
             self.malVS.delete_video()
+    
+    def save_testdata(self):
+        row = ['']
+        for i in range(len(self.rois)):
+            row.append('')
+            row.append(self.temp_data[i][0])
+            row.append(self.temp_data[i][1])
+            row.append(self.temp_data[i][2])
+            row.append(self.temp_data[i][3])                                                                 
+        self.malfunctionFile.save_data(row)
         
 
 ### TEST DONE ##############################################################################################################

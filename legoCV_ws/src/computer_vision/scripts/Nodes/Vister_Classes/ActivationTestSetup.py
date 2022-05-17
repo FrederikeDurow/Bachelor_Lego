@@ -10,7 +10,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
 #sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 import ROIs
-from computer_vision.msg import ProjectInfo
+from computer_vision.msg import ActivationTestInfo
 from computer_vision.msg import RoiList
 
 class ActivationTestSetup:
@@ -29,6 +29,7 @@ class ActivationTestSetup:
         self.path = None
         self.rois = []
         self.testVideo = 0
+        
         #Initializations for Regions of Interest
         self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
 
@@ -37,7 +38,6 @@ class ActivationTestSetup:
         
 
     def callback(self,data):
-        print("callback for image")
         bridge = CvBridge()
         try:
             self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
@@ -90,7 +90,7 @@ class ActivationTestSetup:
         # self.malfunctionVideo = input()
 
     def create_test_message(self):
-        info = ProjectInfo()
+        info = ActivationTestInfo()
         info.FileName = self.fileName
         info.Lap = int(self.nrOfLaps)
         for i in range(len(self.rois)):
@@ -106,7 +106,7 @@ class ActivationTestSetup:
     
     def publish_info(self):
         self.create_test_message()
-        testPub = rospy.Publisher("ActivationTest", ProjectInfo, queue_size=10)
+        testPub = rospy.Publisher("ActivationTest", ActivationTestInfo, queue_size=10)
         robotPub = rospy.Publisher("StartRobot", Bool, queue_size=10)
         rate = rospy.Rate(10) #10Hz
         self.sub.unregister()
