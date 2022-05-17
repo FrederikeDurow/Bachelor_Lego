@@ -59,6 +59,7 @@ class ActivationTestSetup:
         self.set_path()
         self.set_file_name()
         self.set_rois()
+        self.publish_info()
 
     def set_laps(self):
         print("\n[USER INPUT] Please enter number of laps:")
@@ -85,7 +86,13 @@ class ActivationTestSetup:
     
     def set_video_settings(self):
         print("\n[USER INPUT] Do you want to save a video of the whole test? (y/n)")
-        self.testVideo = input()
+        while True:
+            k = input()
+            if k == "y" or k == "n":
+                self.testVideo = k
+                break
+            else:
+                pass
         # print("\n[USER INPUT] Do you want to save a videos of malfunctions? (1 - yes, 0 - no)")
         # self.malfunctionVideo = input()
 
@@ -101,6 +108,7 @@ class ActivationTestSetup:
             info.TestVideo = True
         else:
             info.TestVideo = False
+        print("TestVideo: " + str(info.TestVideo))
         info.DataPath = self.path
         self.msg = info
     

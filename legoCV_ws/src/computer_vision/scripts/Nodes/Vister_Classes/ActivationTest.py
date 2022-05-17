@@ -68,6 +68,7 @@ class ActivationTest:
         if self.current_frame is not None:
             self.unpack_message(data)
             self.setup_datafile()
+            self.setup_testfile()
             self.setupSub.unregister()
             self.start_test()
 
@@ -107,8 +108,9 @@ class ActivationTest:
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
         if self.testVideo == True:
+            print("Was true, so making a video")
             self.testVS = VideoSaver.VideoSaver(self.file_name, self.path)
-        self.malVS = MalfunctionVideoSaver.MalfunctionVideoSaver(self.path)
+        #self.malVS = MalfunctionVideoSaver.MalfunctionVideoSaver(self.path)
         self.get_control_data()
         self.test_started = True                                        
         self.run_robot(True)
@@ -155,7 +157,7 @@ class ActivationTest:
         # roboService = rospy.ServiceProxy("RunNextLap", Robo)
         self.roboService(request)
         if request == True:
-            self.malVS.start_recording("Lap"+str(1+self.lapCounter))
+            #self.malVS.start_recording("Lap"+str(1+self.lapCounter))
             self.roboCallback()
             self.rate.sleep()
         else:
@@ -184,6 +186,7 @@ class ActivationTest:
         if self.called == 0:
             self.called = 1
             self.lapCounter += 1
+            self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
             sys.stdout.write("\r")
             sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
             sys.stdout.flush()
@@ -206,7 +209,8 @@ class ActivationTest:
             crop_img = self.current_frame[roi[1] : roi[1]+roi[3], roi[0] : roi[0]+roi[2]]
             self.BB.applyBoundingBox(crop_img)
             temp = self.BB.drawBoundingbox()
-            cv2.imwrite("lap"+str(self.lapCounter)+"Roi"+str(cnt)+".jpg", temp)
+            imName = "lap"+str(self.lapCounter)+"Roi"+str(cnt)+".jpg"
+            cv2.imwrite(os.path.join(self.path,imName), temp)
         self.temp_data = self.BB.get_data()
         self.BB.clear_data()
         #self.BB.save_data(self.lapCounter)
@@ -239,18 +243,17 @@ class ActivationTest:
                 self.result[i]= 0
 
     def update_malfunctions(self):
-        print("in malfunction")
         malfunction_occured = False
         for i in range(len(self.rois)):
             if self.result[i] == 0 and self.malfunctions[i] == 0:
                 self.malfunctions[i] = self.lapCounter
                 malfunction_occured = True
       
-        self.malVS.stop_recording()
+        #self.malVS.stop_recording()
       
-        if malfunction_occured == False:
-            print("trying to delete video")
-            self.malVS.delete_video()
+        # if malfunction_occured == False:
+        #     print("trying to delete video")
+            #self.malVS.delete_video()
     
     def save_testdata(self):
         row = ['']
@@ -259,13 +262,15 @@ class ActivationTest:
             row.append(self.temp_data[i][0])
             row.append(self.temp_data[i][1])
             row.append(self.temp_data[i][2])
-            row.append(self.temp_data[i][3])                                                                 
-        self.malfunctionFile.save_data(row)
+            row.append(self.temp_data[i][3]) 
+        self.testFile.save_data(row)                                                                
+    
         
 
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
         if self.testVideo == True:
+
             self.testVS.stop_recording()
         #self.malVS.stop_recording()
         self.save_data()

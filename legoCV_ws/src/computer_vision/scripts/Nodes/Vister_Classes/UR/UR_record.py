@@ -35,10 +35,10 @@ def record_data(counter, frequency):
     #args = parse_args(args)
     dt = 1 / frequency
     start = time.time()
-    if counter % 10 == 0:
-        sys.stdout.write("\r")
-        sys.stdout.write("{:3d} samples.".format(counter))
-        sys.stdout.flush()
+    #if counter % 10 == 0:
+        # sys.stdout.write("\r")
+        # sys.stdout.write("{:3d} samples.".format(counter))
+        # sys.stdout.flush()
     end = time.time()
     duration = end - start
     if duration < dt:
