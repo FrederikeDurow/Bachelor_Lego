@@ -134,6 +134,7 @@ class MotionTrackerSetup:
     def set_test_info(self):
         self.set_laps()
         self.set_rois()
+        self.set_path()
         self.set_file_name()
         self.trackbar = "Running"
         self.createTrackbars = 1
@@ -158,7 +159,7 @@ class MotionTrackerSetup:
 
     def set_path(self):
         print("\n[USER INPUT] Enter the location at which all data and video files should be saved.:")
-        self.path = input()
+        self.path = str(input())
        
     def set_file_name(self):
         print("\n[USER INPUT] Please enter the output file name:")

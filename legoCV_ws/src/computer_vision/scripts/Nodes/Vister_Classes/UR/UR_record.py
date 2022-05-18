@@ -26,7 +26,7 @@ def data_to_output():
     #print("[MSG] Data to be saved was succesfully set!\n")
     #data_output.append(data_to_be_stored)
     #print(data_output)
-    k = input('\n[WAIT USER] Enter the whished name for the CSV file: ')
+    k = input('\n[WAIT USER] Enter a name for the CSV file: ')
     csv_file = str(k)+".csv"
 
     return data_output, csv_file

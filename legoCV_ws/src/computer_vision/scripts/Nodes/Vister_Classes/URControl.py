@@ -1,8 +1,7 @@
 import sys,os
 import rospy
 from computer_vision.srv import Robo, RoboResponse
-from std_msgs.msg import Bool
-#sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+from std_msgs.msg import String
 from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import rtde_io
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -15,7 +14,8 @@ class ur_robot:
     def __init__(self):
         #Wait for start signal from Setup_Node
         self.start = False
-        self.sub = rospy.Subscriber("StartRobot", Bool, self.startCallback)
+        self.path = ""
+        self.sub = rospy.Subscriber("StartRobot", String, self.startCallback)
 
         while self.start == False:
             pass
@@ -29,12 +29,12 @@ class ur_robot:
         self.frequency = float(input("[WAIT USER] Insert frequency of data saving (default = 500): "))
         self.robot_recive = RTDEReceive(self.ip,self.frequency)
         self.rtde_in_out =rtde_io.RTDEIOInterface(self.ip)
-        self.robot_recive.startFileRecording(self.output_file, self.data_to_record)
-        #self.record()
+        self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
         self.roboSrv = rospy.Service("RunNextLap", Robo, self.callback)
     
     def startCallback(self, data):
-        self.start = data
+        self.start = True
+        self.path = data
 
     def record(self):
         while self.robot_dash.isConnected() == True:
@@ -45,8 +45,6 @@ class ur_robot:
             return RoboResponse(self.run_lap())
         elif request.start == False:
             return RoboResponse(self.test_done())
-        #return RoboResponse(True)
-      
 
     def run_lap(self):
 
@@ -68,7 +66,6 @@ class ur_robot:
                     self.counter = UR_rec.record_data(self.counter, self.frequency)
                    
             self.robot_dash.pause()
-            #print("\n[MSG] Waiting for start running signal\n")
             return True
 
     def test_done(self):

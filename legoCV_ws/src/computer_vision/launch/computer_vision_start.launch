@@ -4,8 +4,8 @@
     
     <node pkg="computer_vision" type="tracker_node.py" name="MotionTracker" output="screen" />
 
-    <node pkg="computer_vision" type="ur_node.py" name="UR" output="screen"/>
+    <node pkg="computer_vision" type="ur_node.py" name="UR" output="screen" />
 
-    <node pkg="computer_vision" type="project_setup_node.py" name="ProjectSetup" output="screen"  />
+    <node pkg="computer_vision" type="project_setup_node.py" name="ProjectSetup" output="screen" />
     
 </launch>

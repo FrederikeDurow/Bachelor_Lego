@@ -210,7 +210,8 @@ class ActivationTest:
             self.BB.applyBoundingBox(crop_img)
             temp = self.BB.drawBoundingbox()
             imName = "lap"+str(self.lapCounter)+"Roi"+str(cnt)+".jpg"
-            #cv2.imwrite(os.path.join(self.path,imName), temp)
+            if self.lapCounter %10 == 0:
+                cv2.imwrite(os.path.join(self.path,imName), temp)
         self.temp_data = self.BB.get_data()
         self.BB.clear_data()
         #self.BB.save_data(self.lapCounter)
