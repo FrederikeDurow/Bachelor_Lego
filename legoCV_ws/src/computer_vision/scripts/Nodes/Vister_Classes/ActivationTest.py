@@ -167,7 +167,7 @@ class ActivationTest:
         self.camera_ready = True
         bridge = CvBridge()
         try:
-            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
         except CvBridgeError as e:
             print(e)
         if self.test_started == True:

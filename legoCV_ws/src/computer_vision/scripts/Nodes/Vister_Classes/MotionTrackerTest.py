@@ -103,7 +103,7 @@ class MotionTracker:
     def camCallback(self,data):
         bridge = CvBridge()
         try:
-            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
         except CvBridgeError as e:
             print(e)
         if self.test_started == True and self.current_frame is not None:

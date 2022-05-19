@@ -40,7 +40,7 @@ class ActivationTestSetup:
     def callback(self,data):
         bridge = CvBridge()
         try:
-            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
         except CvBridgeError as e:
             print(e)
         self.current_frame = self.newRois.draw_rois(self.current_frame)
