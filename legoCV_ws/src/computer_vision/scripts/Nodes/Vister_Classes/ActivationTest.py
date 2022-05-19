@@ -39,12 +39,12 @@ class ActivationTest:
         
         #Variables to Check for Malfunctions
         self.control_positions = []
-        self.w_min = None
-        self.h_min = None
-        self.w_max = None
-        self.h_max = None
-        self.x_buffer = 5                                                                                           #GÆT - SKAL RETTES
-        self.y_buffer = 5
+        self.pos_buffer = 4.5  
+
+        self.w_mean = None
+        self.size_buffer = 4
+        self.h_mean = None
+         
         self.temp_data = []
         self.result = []
         
@@ -110,7 +110,6 @@ class ActivationTest:
         if self.testVideo == True:
             print("Was true, so making a video")
             self.testVS = VideoSaver.VideoSaver(self.file_name, self.path)
-        #self.malVS = MalfunctionVideoSaver.MalfunctionVideoSaver(self.path)
         self.get_control_data()
         self.test_started = True                                        
         self.run_robot(True)
@@ -125,24 +124,26 @@ class ActivationTest:
             cv2.imwrite("ControlRoi"+str(cnt)+".jpg", temp)
         bb_data=self.BB.get_data()
         self.BB.clear_data()
-        self.process_control_data(bb_data)
+        self.process_control_position(bb_data)
+        self.process_control_size(bb_data)
 
-    def process_control_data(self, control_data):
+
+    def process_control_position(self, control_data):
+        for bb in range(len(control_data)):
+            self.control_positions.append([control_data[bb][0], control_data[bb][1]])
+        
+    def process_control_size(self, control_data):
         w_list = []
         h_list = []
         for bb in range(len(control_data)):
-            self.control_positions.append([control_data[bb][0], control_data[bb][1]])
             w_list.append(control_data[bb][2])
             h_list.append(control_data[bb][3])
-        self.w_min = np.mean(w_list) - np.var(w_list)*5
-        self.w_max = np.mean(w_list) + np.var(w_list)*5
-        self.h_min = np.mean(h_list) - np.var(h_list)*5
-        self.h_max = np.mean(h_list) + np.var(h_list)*5
+        self.w_mean = np.mean(w_list)
+        self.h_mean = np.mean(h_list)
     
     def before_first_lap(self):
         print("\n[MSG] Setup is completed.")
         print("\n[MSG] Test is running, don't shutdown computer.")  
-        # self.malVS.start_recording()
         if self.testVideo == True:
             print("calling total video")
             self.testVS.start_recording()
@@ -153,11 +154,9 @@ class ActivationTest:
         rospy.wait_for_service("RunNextLap")
         if self.first_lap_run == False:
             self.before_first_lap()
-        # self.rate = rospy.Rate(1)
-        # roboService = rospy.ServiceProxy("RunNextLap", Robo)
+       
         self.roboService(request)
         if request == True:
-            #self.malVS.start_recording("Lap"+str(1+self.lapCounter))
             self.roboCallback()
             self.rate.sleep()
         else:
@@ -214,10 +213,8 @@ class ActivationTest:
                 cv2.imwrite(os.path.join(self.path,imName), temp)
         self.temp_data = self.BB.get_data()
         self.BB.clear_data()
-        #self.BB.save_data(self.lapCounter)
     
     def process_data(self):
-        #self.BB.get_data()
         self.save_testdata()
         self.check_position()
         self.check_size()
@@ -228,8 +225,8 @@ class ActivationTest:
         for i in range(len(self.rois)):
             x,y = self.control_positions[i]
             x_new,y_new,_,_ = self.temp_data[i]
-            if x_new in range(x-self.x_buffer, x+self.x_buffer):
-                if y_new in range(y-self.y_buffer, y+self.y_buffer):
+            if x_new in range(x-self.pos_buffer, x+self.pos_buffer):
+                if y_new in range(y-self.pos_buffer, y+self.pos_buffer):
                     self.result.append(1)
                 else:
                     self.result.append(0)
@@ -240,8 +237,9 @@ class ActivationTest:
     def check_size(self):
         for i in range(len(self.rois)):
             _,_,w,h = self.temp_data[i]
-            if (w not in range(int(self.w_min), int(self.w_max))) or (h not in range(int(self.h_min), int(self.h_max))):
-                self.result[i]= 0
+            if (w not in range(int(self.w_mean-self.size_buffer), int(self.w_mean+self.size_buffer))):
+                if (h not in range(int(self.h_mean-self.size_buffer), int(self.h_mean+self.size_buffer))):
+                    self.result[i]= 0
 
     def update_malfunctions(self):
         malfunction_occured = False
@@ -249,12 +247,6 @@ class ActivationTest:
             if self.result[i] == 0 and self.malfunctions[i] == 0:
                 self.malfunctions[i] = self.lapCounter
                 malfunction_occured = True
-      
-        #self.malVS.stop_recording()
-      
-        # if malfunction_occured == False:
-        #     print("trying to delete video")
-            #self.malVS.delete_video()
     
     def save_testdata(self):
         row = ['']
@@ -271,14 +263,10 @@ class ActivationTest:
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
         if self.testVideo == True:
-
             self.testVS.stop_recording()
-        #self.malVS.stop_recording()
         self.save_data()
         print("The test has been completed and the data is saved.")
-        #Stop all subscriptions, publisher and windows
         self.camSub.unregister()
-        #self.roboSub.unregister()
         cv2.destroyAllWindows()
 
     def save_data(self):
