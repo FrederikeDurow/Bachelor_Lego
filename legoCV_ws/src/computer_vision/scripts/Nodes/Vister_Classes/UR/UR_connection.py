@@ -9,6 +9,7 @@ import dashboard_client
 # move node, as it will only move between waypoint if is set up like that
 
 def establish_connection():
+    #IP = '192.168.1.68'
     IP = '192.168.1.68'
     ROBOT_IP = IP
     #ROBOT_IP = input("Enter IP-address of Robot: ")

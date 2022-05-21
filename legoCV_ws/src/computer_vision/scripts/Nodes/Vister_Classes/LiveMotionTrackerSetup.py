@@ -30,7 +30,7 @@ class MotionTrackerSetup:
         self.state = 0
         
         #Initializations for Regions of Interest
-        self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
+        self.newRois = ROIs.ROIs(self.windowName)
 
         #Initialization of message
         self.msg = None
@@ -181,7 +181,7 @@ class MotionTrackerSetup:
     
     def publish_info(self):
         self.create_test_message()
-        testPub = rospy.Publisher("MotionTracking", MotionTrackerInfo, queue_size=10)
+        testPub = rospy.Publisher("LiveMotionTracking", MotionTrackerInfo, queue_size=10)
         rate = rospy.Rate(10) #10Hz
         self.sub.unregister()
         while not rospy.is_shutdown():

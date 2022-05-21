@@ -166,7 +166,8 @@ include_directories(
  catkin_install_python(PROGRAMS
    scripts/Nodes/project_setup_node.py
    scripts/Nodes/activation_node.py
-   scripts/Nodes/tracker_node.py 
+   scripts/Nodes/tracker_video_node.py 
+   scripts/Nodes/tracker_live_node.py 
    scripts/Nodes/ur_node.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )

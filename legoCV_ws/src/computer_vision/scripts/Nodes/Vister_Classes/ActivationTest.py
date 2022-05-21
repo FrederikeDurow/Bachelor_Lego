@@ -15,7 +15,6 @@ sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
 import BoundingBox 
 import DataFile
 import VideoSaver
-import MalfunctionVideoSaver
 
 class ActivationTest:
     
@@ -108,7 +107,6 @@ class ActivationTest:
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
         if self.testVideo == True:
-            print("Was true, so making a video")
             self.testVS = VideoSaver.VideoSaver(self.file_name, self.path)
         self.get_control_data()
         self.test_started = True                                        
@@ -145,7 +143,6 @@ class ActivationTest:
         print("\n[MSG] Setup is completed.")
         print("\n[MSG] Test is running, don't shutdown computer.")  
         if self.testVideo == True:
-            print("calling total video")
             self.testVS.start_recording()
         self.first_lap_run = True
 
@@ -185,7 +182,8 @@ class ActivationTest:
         if self.called == 0:
             self.called = 1
             self.lapCounter += 1
-            self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
+            if self.testVideo == True:
+                self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
             sys.stdout.write("\r")
             sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
             sys.stdout.flush()
@@ -209,8 +207,8 @@ class ActivationTest:
             self.BB.applyBoundingBox(crop_img)
             temp = self.BB.drawBoundingbox()
             imName = "lap"+str(self.lapCounter)+"Roi"+str(cnt)+".jpg"
-            if self.lapCounter %10 == 0:
-                cv2.imwrite(os.path.join(self.path,imName), temp)
+            #if self.lapCounter %10 == 0:
+            cv2.imwrite(os.path.join(self.path,imName), temp)
         self.temp_data = self.BB.get_data()
         self.BB.clear_data()
     
@@ -225,8 +223,8 @@ class ActivationTest:
         for i in range(len(self.rois)):
             x,y = self.control_positions[i]
             x_new,y_new,_,_ = self.temp_data[i]
-            if x_new in range(x-self.pos_buffer, x+self.pos_buffer):
-                if y_new in range(y-self.pos_buffer, y+self.pos_buffer):
+            if x_new in range(int(x-self.pos_buffer), int(x+self.pos_buffer)):
+                if y_new in range(int(y-self.pos_buffer), int(y+self.pos_buffer)):
                     self.result.append(1)
                 else:
                     self.result.append(0)
@@ -265,7 +263,7 @@ class ActivationTest:
         if self.testVideo == True:
             self.testVS.stop_recording()
         self.save_data()
-        print("The test has been completed and the data is saved.")
+        print("\nThe test has been completed and the data is saved.")
         self.camSub.unregister()
         cv2.destroyAllWindows()
 

@@ -36,6 +36,7 @@ class MotionTracker:
         self.crop_img = None
         self.objects = OrderedDict()
         self.path = None
+        self.videoPath = None
 
         #For Tracker
         self.position = True
@@ -47,10 +48,7 @@ class MotionTracker:
         self.color = None
 
         #Create subscriber to Setup Node
-        self.setupSub = rospy.Subscriber("MotionTracking", MotionTrackerInfo, self.setupCallback)
-
-        #Create subscriber to camera
-        self.camSub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.camCallback)
+        self.setupSub = rospy.Subscriber("VideoMotionTracking", MotionTrackerInfo, self.setupCallback)
 
         #create Centroid Tracker
         self.tracker = CentroidTracker.centroidTracker()
@@ -66,6 +64,7 @@ class MotionTracker:
     def unpack_message(self, data):
         self.file_name = data.FileName
         self.nrOfLaps = data.Lap
+        self.videoPath = data.VideoPath
         self.path = data.DataPath
         self.hsv_low = data.HSV_lower
         self.hsv_up = data.HSV_upper
@@ -81,12 +80,11 @@ class MotionTracker:
                 self.lap_roi = [temp_roi[0]-self.total_roi[0],temp_roi[1]-self.total_roi[1], temp_roi[2], temp_roi[3]] 
 
     def start_test(self):
-        self.VS = VideoSaver.VideoSaver(self.file_name, self.path)
-        self.VS.start_recording()
         self.setup_datafile()
         self.update_timer()
         self.test_started = True
         print("\n[MSG] Test is running, don't shutdown computer.")  
+        self.run_test()
 
     def setup_datafile(self):
         # header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
@@ -94,40 +92,35 @@ class MotionTracker:
         header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
         self.lapFile = DataFile.DataFile(self.file_name,self.path,header)
 
-### STARTING ##########################################################################################################
-    # def start_test(self):
-    #     self.test_started = True
-    #     #CALL TRACKER                                                        
+                                                      
 
 ### RUNNING ###########################################################################################################
-    def camCallback(self,data):
-        bridge = CvBridge()
-        try:
-            self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
-        except CvBridgeError as e:
-            print(e)
-        if self.test_started == True and self.current_frame is not None:
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                self.stop_test()
-            self.prep_image()
-            
-            self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
-            self.objects = self.tracker.update(self.detections)
-            self.draw_id()
-            cv2.rectangle(self.crop_img, (self.lap_roi[0],self.lap_roi[1]), (self.lap_roi[0]+self.lap_roi[2], self.lap_roi[1]+self.lap_roi[3]), (0,255,0), 2)
-            cv2.imshow(self.project_name, self.crop_img)
-            self.check_position()
-            self.update_laps()
-            
-            if self.lapCounter == self.nrOfLaps:
-                self.stop_test()
+    def run_test(self):
+        video = cv2.VideoCapture(self.videoPath)
+        ret, self.current_frame = video.read()
+        cv2.imshow("video", self.current_frame)
+        cv2.waitKey(1)
+        while True:
+            ret, self.current_frame = video.read()
+            if ret: 
+                self.prep_image()
+                
+                self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
+                self.objects = self.tracker.update(self.detections)
+                self.draw_id()
+                cv2.rectangle(self.crop_img, (self.lap_roi[0],self.lap_roi[1]), (self.lap_roi[0]+self.lap_roi[2], self.lap_roi[1]+self.lap_roi[3]), (0,255,0), 2)
+                cv2.imshow(self.project_name, self.crop_img)
+                cv2.waitKey(1)
+                self.check_position()
+                self.update_laps()
+               
+            else: 
+                break
+        video.release()
+        cv2.destroyAllWindows()
+        self.stop_test()
 
 
-    def undistort(self):
-        cMat = np.array([[1190.244030400389, 0, 729.660947406785],[0, 1183.894733755722, 562.2194095063451],[0, 0, 1]]) 
-        dist = np.array([[-0.2364909197149232, 0.09037841331243952, -9.091405949805423e-05, 0.001536567533562297, 0]])
-        self.current_frame = cv2.undistort(self.current_frame, cMat, dist, None)
         
     def prep_image(self):
         blurred = cv2.GaussianBlur(self.current_frame, (11, 11), 0)
@@ -181,9 +174,9 @@ class MotionTracker:
        
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
-        self.VS.stop_recording()
+        #self.VS.stop_recording()
         print("\n[MSG] The test has been completed and the data is saved.")
-        self.camSub.unregister()
+        #self.camSub.unregister()
         cv2.destroyAllWindows()
 
     def save_data(self):

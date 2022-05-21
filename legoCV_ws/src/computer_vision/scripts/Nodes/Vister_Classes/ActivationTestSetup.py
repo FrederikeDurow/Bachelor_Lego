@@ -4,7 +4,7 @@ import cv2
 import sys,os
 import numpy as np
 from sensor_msgs.msg import Image
-from std_msgs.msg import Bool
+from std_msgs.msg import String
 from cv_bridge import CvBridge, CvBridgeError
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
@@ -31,7 +31,7 @@ class ActivationTestSetup:
         self.testVideo = 0
         
         #Initializations for Regions of Interest
-        self.newRois = ROIs.ROIs(self.windowName, self.current_frame)
+        self.newRois = ROIs.ROIs(self.windowName)
 
         #Initialization of message
         self.msg = None
@@ -108,18 +108,17 @@ class ActivationTestSetup:
             info.TestVideo = True
         else:
             info.TestVideo = False
-        print("TestVideo: " + str(info.TestVideo))
         info.DataPath = self.path
         self.msg = info
     
     def publish_info(self):
         self.create_test_message()
         testPub = rospy.Publisher("ActivationTest", ActivationTestInfo, queue_size=10)
-        robotPub = rospy.Publisher("StartRobot", Bool, queue_size=10)
+        robotPub = rospy.Publisher("StartRobot", String, queue_size=10)
         rate = rospy.Rate(10) #10Hz
         self.sub.unregister()
         cv2.destroyWindow(self.windowName)
         while not rospy.is_shutdown():
             testPub.publish(self.msg)
-            robotPub.publish(True)
+            robotPub.publish(self.path)
             rate.sleep()

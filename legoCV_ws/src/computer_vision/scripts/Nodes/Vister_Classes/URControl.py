@@ -14,7 +14,7 @@ class ur_robot:
     def __init__(self):
         #Wait for start signal from Setup_Node
         self.start = False
-        self.path = ""
+        self.path = None
         self.sub = rospy.Subscriber("StartRobot", String, self.startCallback)
 
         while self.start == False:
@@ -29,10 +29,11 @@ class ur_robot:
         self.frequency = float(input("[WAIT USER] Insert frequency of data saving (default = 500): "))
         self.robot_recive = RTDEReceive(self.ip,self.frequency)
         self.rtde_in_out =rtde_io.RTDEIOInterface(self.ip)
-        self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
+        self.robot_recive.startFileRecording(os.path.join(str(self.path), self.output_file), self.data_to_record)
         self.roboSrv = rospy.Service("RunNextLap", Robo, self.callback)
     
     def startCallback(self, data):
+        #self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
         self.start = True
         self.path = data
 

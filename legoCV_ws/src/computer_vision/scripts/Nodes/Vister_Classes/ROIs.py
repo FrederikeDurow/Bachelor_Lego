@@ -3,16 +3,14 @@ import cv2
 
 class ROIs:
 
-    def __init__(self, windowName, image):
+    def __init__(self, windowName):
         self.window_name = windowName
-        self.current_image = image
         self.temp_roi = []
         self.rois = []
         self.roi_state = 0
         self.roi_added = 0
         self.roi_chosen = False
    
-
     def get_rois(self):
         return self.rois
 
