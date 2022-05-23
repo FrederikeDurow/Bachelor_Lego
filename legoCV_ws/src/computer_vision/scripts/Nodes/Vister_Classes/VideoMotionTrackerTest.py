@@ -45,6 +45,11 @@ class MotionTracker:
         self.test_start_time = 0
         self.lap_start_time = 0
         self.lap_time = 0
+      
+        self.fps = 0
+        self.frame_counter = 0
+        self.last_lap_frame = 0
+      
         self.color = None
 
         #Create subscriber to Setup Node
@@ -97,6 +102,7 @@ class MotionTracker:
 ### RUNNING ###########################################################################################################
     def run_test(self):
         video = cv2.VideoCapture(self.videoPath)
+        self.fps = video.get(cv2.CAP_PROP_FPS)
         ret, self.current_frame = video.read()
         cv2.imshow("video", self.current_frame)
         cv2.waitKey(1)
@@ -104,6 +110,7 @@ class MotionTracker:
             ret, self.current_frame = video.read()
             if ret: 
                 self.prep_image()
+                self.frame_counter = self.frame_counter+1
                 
                 self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
                 self.objects = self.tracker.update(self.detections)
@@ -127,7 +134,6 @@ class MotionTracker:
         self.crop_img = blurred[self.total_roi[1] : self.total_roi[1]+self.total_roi[3], self.total_roi[0] : self.total_roi[0]+self.total_roi[2]]
 
          
-
     def draw_detections(self):
         if  self.detections is not None:
             for i in range(len(self.detections)):
@@ -165,12 +171,17 @@ class MotionTracker:
         
 
     def update_timer(self):
-        if self.timer_started == False:
-            self.timer_started = True
-            self.test_start_time = time.time()
-            self.lap_start_time = time.time()
-        self.lap_time = time.time() - self.lap_start_time
-        self.lap_start_time = time.time()
+        print("last frame: " + str(self.last_lap_frame))
+        print("Frame counter: " + str(self.frame_counter))
+        print("FPS: " + str(self.fps))
+        print("lap time: " + str(self.lap_time))
+        if self.lapCounter == 1:
+            self.lap_time = self.last_lap_frame/self.fps
+        elif self.lapCounter > 1:
+            self.lap_time = (self.frame_counter - self.last_lap_frame)/self.fps
+        else:
+            pass
+        self.last_lap_frame  = self.frame_counter
        
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
@@ -183,5 +194,5 @@ class MotionTracker:
         row = ['', self.lapCounter, self.lap_time]                                                             
         self.lapFile.save_data(row)
         if self.lapCounter == self.nrOfLaps:
-            row = ['', "Total Time: ", time.time()-self.test_start_time]                                                             
+            row = ['', "Total Time: ", (self.last_lap_frame-self.test_start_time)/self.fps]                                                             
             self.lapFile.save_data(row)

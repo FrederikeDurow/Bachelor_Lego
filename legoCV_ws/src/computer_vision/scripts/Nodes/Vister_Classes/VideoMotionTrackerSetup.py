@@ -230,7 +230,6 @@ class MotionTrackerSetup:
             rate.sleep()
     
     def set_HSV(self):
-        print("hej")
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
         cv2.imshow(self.window_name, self.initial_frame)
         cv2.waitKey(1)
