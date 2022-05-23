@@ -4,6 +4,7 @@ import rospy
 import sys, os
 import cv2
 import numpy as np
+import math
 from sensor_msgs.msg import Image
 from computer_vision.msg import ActivationTestInfo
 from computer_vision.srv import Robo
@@ -37,12 +38,20 @@ class ActivationTest:
         self.camera_ready = False
         
         #Variables to Check for Malfunctions
-        self.control_positions = []
-        self.pos_buffer = 4.5  
+        #self.control_positions = []
+        self.pos_buffer = []
+        self.x_buffer =  10
+        self.y_buffer = 10
 
         self.w_mean = None
-        self.size_buffer = 4
         self.h_mean = None
+        self.w_min = None
+        self.w_max = None
+        self.h_min = None
+        self.h_max = None
+        self.size_buf = 6.5
+        self.size_buffer = []
+        
          
         self.temp_data = []
         self.result = []
@@ -119,8 +128,10 @@ class ActivationTest:
             crop_img = self.current_frame[roi[1]:roi[1]+roi[3],roi[0]:roi[0]+roi[2]]
             self.BB.applyBoundingBox(crop_img)
             temp = self.BB.drawBoundingbox()
-            cv2.imwrite("ControlRoi"+str(cnt)+".jpg", temp)
+            cv2.imwrite("/home/frederike/Desktop/ControlRoi"+str(cnt)+".jpg", temp)
         bb_data=self.BB.get_data()
+        print("Control Data:")
+        print(bb_data)
         self.BB.clear_data()
         self.process_control_position(bb_data)
         self.process_control_size(bb_data)
@@ -128,16 +139,42 @@ class ActivationTest:
 
     def process_control_position(self, control_data):
         for bb in range(len(control_data)):
-            self.control_positions.append([control_data[bb][0], control_data[bb][1]])
-        
+            x,y,_,_ = control_data[bb]
+            #self.control_positions.append([control_data[bb][0], control_data[bb][1]])
+            x_min = math.floor(x-(x/100*self.x_buffer))
+            x_max = math.ceil(x+(x/100*self.x_buffer))
+            y_min = math.floor(y-(y/100*self.y_buffer))
+            y_max = math.ceil(y+(y/100*self.y_buffer))
+            self.pos_buffer.append([x_min,x_max,y_min,y_max])
+        print('Position buffer:')
+        print(self.pos_buffer)
+
     def process_control_size(self, control_data):
-        w_list = []
-        h_list = []
         for bb in range(len(control_data)):
-            w_list.append(control_data[bb][2])
-            h_list.append(control_data[bb][3])
-        self.w_mean = np.mean(w_list)
-        self.h_mean = np.mean(h_list)
+            _,_,w,h = control_data[bb]
+            w_min = math.floor(w - (w/100*self.size_buf))
+            w_max = math.ceil(w + (w/100*self.size_buf))
+            h_min = math.floor(h - (h/100*self.size_buf))
+            h_max = math.ceil(h + (h/100*self.size_buf))
+            self.size_buffer.append([w_min,w_max,h_min,h_max])
+        print('Width interval: (' + str(w_min) + "," + str(w_max) + ')')
+        print('Height interval: (' + str(h_min) + "," + str(h_max) + ')')
+
+    # def process_control_size(self, control_data):
+    #     w_list = []
+    #     h_list = []
+    #     for bb in range(len(control_data)):
+    #         w_list.append(control_data[bb][2])
+    #         h_list.append(control_data[bb][3])
+    #     self.w_mean = np.mean(w_list)
+    #     self.h_mean = np.mean(h_list)
+    #     self.w_min = math.ceil(self.w_mean - self.w_mean/100*self.size_buffer)
+    #     self.w_max = math.ceil(self.w_mean + self.w_mean/100*self.size_buffer)
+    #     self.h_min = math.ceil(self.h_mean - self.h_mean/100*self.size_buffer)
+    #     self.h_max = math.ceil(self.h_mean + self.h_mean/100*self.size_buffer)
+    #     print('Width interval: (' + str(self.w_min) + "," + str(self.w_max) + ')')
+    #     print('Height interval: (' + str(self.h_min) + "," + str(self.h_max) + ')')
+
     
     def before_first_lap(self):
         print("\n[MSG] Setup is completed.")
@@ -218,26 +255,54 @@ class ActivationTest:
         self.check_size()
         self.update_malfunctions()
         
-
     def check_position(self):
         for i in range(len(self.rois)):
-            x,y = self.control_positions[i]
+            #x,y = self.control_positions[i]
             x_new,y_new,_,_ = self.temp_data[i]
-            if x_new in range(int(x-self.pos_buffer), int(x+self.pos_buffer)):
-                if y_new in range(int(y-self.pos_buffer), int(y+self.pos_buffer)):
+            x_min,x_max,y_min,y_max = self.pos_buffer[i]
+            
+            if x_new in range(int(x_min), int(x_max)):
+                if y_new in range(int(y_min), int(y_max)):
                     self.result.append(1)
                 else:
                     self.result.append(0)
             else:
                 self.result.append(0)
-      
-       
+    
+    
     def check_size(self):
         for i in range(len(self.rois)):
             _,_,w,h = self.temp_data[i]
-            if (w not in range(int(self.w_mean-self.size_buffer), int(self.w_mean+self.size_buffer))):
-                if (h not in range(int(self.h_mean-self.size_buffer), int(self.h_mean+self.size_buffer))):
-                    self.result[i]= 0
+            w_min,w_max,h_min,h_max = self.size_buffer[i]
+            if (w not in range(int(w_min), int(w_max))) or (h not in range(int(h_min), int(h_max))):
+                self.result[i]= 0
+            else:
+                pass
+
+    # def check_position(self):
+    #     for i in range(len(self.rois)):
+    #         x,y = self.control_positions[i]
+    #         x_new,y_new,_,_ = self.temp_data[i]
+    #         xb = (x/100*self.x_buffer)
+    #         yb = (y/100*self.y_buffer)
+    #         print('X interval: (' + str(x-xb) + "," + str(x+xb) + ')')
+    #         print('Y interval: (' + str(y-yb) + "," + str(y+yb) + ')')
+    #         if x_new in range(int(x-xb), int(x+xb)):
+    #             if y_new in range(int(y-yb), int(y+yb)):
+    #                 self.result.append(1)
+    #             else:
+    #                 self.result.append(0)
+    #         else:
+    #             self.result.append(0)
+        
+       
+    # def check_size(self):
+    #     for i in range(len(self.rois)):
+    #         _,_,w,h = self.temp_data[i]
+    #         if (w not in range(int(self.w_min), int(self.w_max))) or (h not in range(int(self.h_min), int(self.h_max))):
+    #             self.result[i]= 0
+    #         else:
+    #             pass
 
     def update_malfunctions(self):
         malfunction_occured = False
