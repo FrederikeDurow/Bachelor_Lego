@@ -102,7 +102,7 @@ class MotionTracker:
 ### RUNNING ###########################################################################################################
     def run_test(self):
         video = cv2.VideoCapture(self.videoPath)
-        self.fps = 100    #video.get(cv2.CAP_PROP_FPS)
+        self.fps = video.get(cv2.CAP_PROP_FPS)
         ret, self.current_frame = video.read()
         cv2.imshow("video", self.current_frame)
         cv2.waitKey(1)

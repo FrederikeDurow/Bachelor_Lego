@@ -183,7 +183,6 @@ class MotionTrackerSetup:
         self.roi_state = 1
         pass
 
-
     def set_lowerright(self, x, y):
         self.temp_roi.append(x-self.temp_roi[0])
         self.temp_roi.append(y-self.temp_roi[1])
@@ -191,8 +190,6 @@ class MotionTrackerSetup:
         self.roi_state = 0
         self.roi_added = 1 
         pass
-
-
 
     def get_rois(self):
         return self.new_rois.get_rois()
@@ -219,7 +216,6 @@ class MotionTrackerSetup:
             info.Rois.append(rList)
         self.msg = info
 
-    
     def publish_info(self):
         self.create_test_message()
         testPub = rospy.Publisher("VideoMotionTracking", MotionTrackerInfo, queue_size=10)
@@ -287,7 +283,6 @@ class MotionTrackerSetup:
                 break
             else:
                 pass
-
 
 def nothing(x):
     pass
