@@ -1,5 +1,5 @@
 string FileName
-int8 Lap
+int32 Lap
 RoiList[] Rois
 bool TestVideo
 string VideoPath
