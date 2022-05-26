@@ -3,7 +3,7 @@ import cv2
 import csv
 import sys
 
-vidCap = cv2.VideoCapture('/home/rasmus/Desktop/Test Videos/Test/07-04/Big Springs/100-Correct-Laps.mp4')
+vidCap = cv2.VideoCapture('/home/rasmus/Desktop/Test/motion_speed_test.avi')
 if not vidCap.isOpened():
    print('Video was not loaded')
    sys.exit()

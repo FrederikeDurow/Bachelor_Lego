@@ -70,10 +70,10 @@ class BackgroundSubstractor():
  ## --------------------- How to use---------------------:
 
  # 1. One video needed (should be from another class)
-video1 = 'C:/Users/rasm4/OneDrive - Syddansk Universitet (1)/Desktop/Test/20-04/TopView.mp4'
+video1 = "/home/rasmus/Desktop/Test/motion_speed_test.avi"
 
  # 2. Create a BacgroundSubstractor object (BBS or MOG2 or KNN)
-test = BackgroundSubstractor('KNN')
+test = BackgroundSubstractor('MOG2')
 
  # 3. Apply detector (first is the template, the other is the one to check on)¨
 test.applyBackgroundSubstractor(video1)
