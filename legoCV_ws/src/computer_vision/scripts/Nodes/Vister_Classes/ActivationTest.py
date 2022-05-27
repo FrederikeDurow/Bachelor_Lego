@@ -11,8 +11,6 @@ from computer_vision.srv import Robo
 from cv_bridge import CvBridge, CvBridgeError
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
-
-#sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
 import BoundingBox 
 import DataFile
 import VideoSaver
@@ -27,7 +25,7 @@ class ActivationTest:
         self.called = 1 
         self.img = None
         self.first_lap_run = False
-        self.testVideo = 0
+        self.test_video = 0
         self.path = None
 
         #self.testStarted = False
@@ -83,7 +81,7 @@ class ActivationTest:
     def unpack_message(self,data):
         self.file_name = data.FileName
         self.nrOfLaps = data.Lap
-        self.testVideo = data.TestVideo
+        self.test_video = data.TestVideo
         self.path = data.DataPath
         cnt = 0
         for roi in data.Rois:
@@ -102,20 +100,20 @@ class ActivationTest:
     
     def setup_testfile(self):
         newFileName = self.file_name + "_test"
-        header = [' ']
+        header = ['Lap Nr']
         for r in range(len(self.rois)):
             header.append('Object'+str(r+1))
-            header.append('X'+str(r+1))
-            header.append('Y'+str(r+1))
-            header.append('W'+str(r+1))
-            header.append('H'+str(r+1))                                                                 
+            # header.append('X'+str(r+1))
+            # header.append('Y'+str(r+1))
+            # header.append('W'+str(r+1))
+            # header.append('H'+str(r+1))                                                                 
         self.testFile = DataFile.DataFile(newFileName,self.path, header)
 
 ### STARTING ##########################################################################################################
     def start_test(self):
         self.start_frame = self.current_frame
         self.BB = BoundingBox.BoundingBox(len(self.rois))  
-        if self.testVideo == True:
+        if self.test_video == True:
             self.testVS = VideoSaver.VideoSaver(self.file_name, self.path)
         self.get_control_data()
         self.test_started = True                                        
@@ -128,7 +126,7 @@ class ActivationTest:
             crop_img = self.current_frame[roi[1]:roi[1]+roi[3],roi[0]:roi[0]+roi[2]]
             self.BB.applyBoundingBox(crop_img)
             temp = self.BB.drawBoundingbox()
-            cv2.imwrite("/home/frederike/Desktop/ControlRoi"+str(cnt)+".jpg", temp)
+            #cv2.imwrite("/home/frederike/Desktop/ControlRoi"+str(cnt)+".jpg", temp)
         bb_data=self.BB.get_data()
         print("Control Data:")
         print(bb_data)
@@ -140,7 +138,6 @@ class ActivationTest:
     def process_control_position(self, control_data):
         for bb in range(len(control_data)):
             x,y,_,_ = control_data[bb]
-            #self.control_positions.append([control_data[bb][0], control_data[bb][1]])
             x_min = math.floor(x-(x/100*self.x_buffer))
             x_max = math.ceil(x+(x/100*self.x_buffer))
             y_min = math.floor(y-(y/100*self.y_buffer))
@@ -179,22 +176,62 @@ class ActivationTest:
     def before_first_lap(self):
         print("\n[MSG] Setup is completed.")
         print("\n[MSG] Test is running, don't shutdown computer.")  
-        if self.testVideo == True:
+        if self.test_video == True:
             self.testVS.start_recording()
         self.first_lap_run = True
 
     def run_robot(self, request):
         #Create service to Robot
-        rospy.wait_for_service("RunNextLap")
-        if self.first_lap_run == False:
-            self.before_first_lap()
-       
-        self.roboService(request)
-        if request == True:
-            self.roboCallback()
-            self.rate.sleep()
-        else:
-            pass
+        while True:
+            rospy.wait_for_service("RunNextLap")
+            if self.first_lap_run == False:
+                self.before_first_lap()
+        
+            self.roboService(request)
+            if request == True:
+                #self.roboCallback()
+                if self.called == 0:
+                    self.called = 1
+                    self.lapCounter += 1
+                    if self.test_video == True:
+                        self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
+                    sys.stdout.write("\r")
+                    sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+                    sys.stdout.flush()
+                    self.get_data()
+                    self.process_data()
+                    if self.lapCounter == self.nrOfLaps:                                                
+                        request = False
+                        break
+                    else:
+                        request = True
+                elif self.called == 1:
+                    self.called = 0
+                    request = True
+                self.rate.sleep()
+            else:
+                pass
+        self.stop_test()
+    
+    def roboCallback(self):
+        if self.called == 0:
+            self.called = 1
+            self.lapCounter += 1
+            if self.test_video == True:
+                self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
+            sys.stdout.write("\r")
+            sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+            sys.stdout.flush()
+            self.get_data()
+            self.process_data()
+            if self.lapCounter == self.nrOfLaps:                                                
+                self.run_robot(False)
+                self.stop_test()
+            else:
+                self.run_robot(True)
+        elif self.called == 1:
+            self.called = 0
+            self.run_robot(True)
 
 ### RUNNING ###########################################################################################################
     def camCallback(self,data):
@@ -215,25 +252,25 @@ class ActivationTest:
         self.current_frame = cv2.undistort(self.current_frame, cMat, dist, None)
 
 
-    def roboCallback(self):
-        if self.called == 0:
-            self.called = 1
-            self.lapCounter += 1
-            if self.testVideo == True:
-                self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
-            sys.stdout.write("\r")
-            sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
-            sys.stdout.flush()
-            self.get_data()
-            self.process_data()
-            if self.lapCounter == self.nrOfLaps:                                                
-                self.run_robot(False)
-                self.stop_test()
-            else:
-                self.run_robot(True)
-        elif self.called == 1:
-            self.called = 0
-            self.run_robot(True)
+    # def roboCallback(self):
+    #     if self.called == 0:
+    #         self.called = 1
+    #         self.lapCounter += 1
+    #         if self.test_video == True:
+    #             self.testVS.change_text("Lap nr: "+str(self.lapCounter+1))
+    #         sys.stdout.write("\r")
+    #         sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+    #         sys.stdout.flush()
+    #         self.get_data()
+    #         self.process_data()
+    #         if self.lapCounter == self.nrOfLaps:                                                
+    #             self.run_robot(False)
+    #             self.stop_test()
+    #         else:
+    #             self.run_robot(True)
+    #     elif self.called == 1:
+    #         self.called = 0
+    #         self.run_robot(True)
     
     def get_data(self):
         cnt = 0
@@ -244,18 +281,19 @@ class ActivationTest:
             self.BB.applyBoundingBox(crop_img)
             temp = self.BB.drawBoundingbox()
             imName = "lap"+str(self.lapCounter)+"Roi"+str(cnt)+".jpg"
-            #if self.lapCounter %10 == 0:
-            cv2.imwrite(os.path.join(self.path,imName), temp)
+            if self.lapCounter %100 == 0:
+                cv2.imwrite(os.path.join(self.path,imName), temp)
         self.temp_data = self.BB.get_data()
         self.BB.clear_data()
     
     def process_data(self):
-        self.save_testdata()
         self.check_position()
         self.check_size()
         self.update_malfunctions()
+        self.save_testdata()
         
     def check_position(self):
+        self.result = []
         for i in range(len(self.rois)):
             #x,y = self.control_positions[i]
             x_new,y_new,_,_ = self.temp_data[i]
@@ -268,6 +306,8 @@ class ActivationTest:
                     self.result.append(0)
             else:
                 self.result.append(0)
+        print("after check_pos, length is: " + str(len(self.result)))
+        print(self.result)
     
     
     def check_size(self):
@@ -278,6 +318,8 @@ class ActivationTest:
                 self.result[i]= 0
             else:
                 pass
+        print("after check_size, length is: " + str(len(self.result)))
+        print(self.result)
 
     # def check_position(self):
     #     for i in range(len(self.rois)):
@@ -312,20 +354,22 @@ class ActivationTest:
                 malfunction_occured = True
     
     def save_testdata(self):
-        row = ['']
+        row = [self.lapCounter]
         for i in range(len(self.rois)):
-            row.append('')
-            row.append(self.temp_data[i][0])
-            row.append(self.temp_data[i][1])
-            row.append(self.temp_data[i][2])
-            row.append(self.temp_data[i][3]) 
+            if self.result[i] == 0:
+                row.append('M')
+            else:
+                row.append(' ')
+            # row.append(self.temp_data[i][1])
+            # row.append(self.temp_data[i][2])
+            # row.append(self.temp_data[i][3]) 
         self.testFile.save_data(row)                                                                
     
         
 
 ### TEST DONE ##############################################################################################################
     def stop_test(self):
-        if self.testVideo == True:
+        if self.test_video == True:
             self.testVS.stop_recording()
         self.save_data()
         print("\nThe test has been completed and the data is saved.")
@@ -340,3 +384,5 @@ class ActivationTest:
             else:
                 row.append('')                                                                 
         self.malfunctionFile.save_data(row)
+
+print(sys.getrecursionlimit())
