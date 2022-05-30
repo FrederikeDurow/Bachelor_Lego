@@ -1,22 +1,27 @@
-import sys,os
+import os
+import sys
+
 import rospy
-from computer_vision.srv import Robo, RoboResponse
-from std_msgs.msg import String
-from rtde_receive import RTDEReceiveInterface as RTDEReceive
 import rtde_io
+from computer_vision.srv import Robo, RoboResponse
+from rtde_receive import RTDEReceiveInterface as RTDEReceive
+from std_msgs.msg import String
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
+import time
+
 from UR import UR_connection as UR_con
 from UR import UR_record as UR_rec
-import time
+
 
 class ur_robot:
     def __init__(self):
-        #Wait for start signal from Setup_Node
+        
         self.start = False
         self.path = None
         self.sub = rospy.Subscriber("StartRobot", String, self.startCallback)
-
+        #Wait for start signal from Setup_Node
         while self.start == False:
             pass
             
@@ -30,24 +35,24 @@ class ur_robot:
         self.robot_recive = RTDEReceive(self.ip,self.frequency)
         self.rtde_in_out =rtde_io.RTDEIOInterface(self.ip)
         self.robot_recive.startFileRecording(os.path.join(str(self.path), self.output_file), self.data_to_record)
-        self.roboSrv = rospy.Service("RunNextLap", Robo, self.callback)
+        self.robo_service = rospy.Service("RunNextLap", Robo, self.serviceCallback)
     
     def startCallback(self, data):
-        #self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
+        self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
         self.start = True
         self.path = data
 
     def record(self):
         while self.robot_dash.isConnected() == True:
-                self.counter = UR_rec.record_data(self.counter, self.frequency)                         #SKAL ÆNDRES, så den direkte bruger self.counter 
+                self.counter = UR_rec.record_data(self.counter, self.frequency)                        
 
-    def callback(self, request):
+    def serviceCallback(self, request):
         if request.start == True:
-            return RoboResponse(self.run_lap())
+            return RoboResponse(self.runLap())
         elif request.start == False:
-            return RoboResponse(self.test_done())
+            return RoboResponse(self.testDone())
 
-    def run_lap(self):
+    def runLap(self):
 
         self.rtde_in_out.setStandardDigitalOut(0,False)
         self.rtde_in_out.setStandardDigitalOut(1,False)
@@ -69,7 +74,7 @@ class ur_robot:
             self.robot_dash.pause()
             return True
 
-    def test_done(self):
+    def testDone(self):
         self.robot_dash.stop()
         self.robot_dash.disconnect()
         self.robot_recive.stopFileRecording()

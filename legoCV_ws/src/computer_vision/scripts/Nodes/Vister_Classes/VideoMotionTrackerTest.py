@@ -1,74 +1,63 @@
 #!/usr/bin/env python3
-from matplotlib.pyplot import draw
-import rospy
+import os
+import sys
+
 import cv2
-import sys,os
-import time
-import numpy as np
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
+import rospy
 from computer_vision.msg import MotionTrackerInfo
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
-#sys.path.insert(0, '/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+from collections import OrderedDict
+
+import CentroidTracker
 import DataFile
 import Object_Color_Detector
-import CentroidTracker
-import VideoSaver
-from collections import OrderedDict
 
 
 class MotionTracker:
 
     def __init__(self):
+        #Setup Variables
         self.project_name = "Motion Tracker Test"                                                                        #NEEDS TO COME FROM USER
         self.file_name = None
-        self.start_frame = None
         self.current_frame = None
-        self.nrOfLaps = None
-        self.lapCounter = 0
+        self.nr_of_laps = None
+        self.lap_counter = 0
         self.total_roi = []
         self.lap_roi = []
-        self.test_started = False
-        self.H= None
-        self.W= None
         self.detections = []
         self.crop_img = None
         self.objects = OrderedDict()
         self.path = None
         self.videoPath = None
 
-        #For Tracker
+        #Tracker Variables
         self.position = True
         self.old_position = True
-        self.timer_started = False
-        self.test_start_time = 0
-        self.lap_start_time = 0
         self.lap_time = 0
       
         self.fps = 0
         self.frame_counter = 0
         self.last_lap_frame = 0
-      
-        self.color = None
 
         #Create subscriber to Setup Node
-        self.setupSub = rospy.Subscriber("VideoMotionTracking", MotionTrackerInfo, self.setupCallback)
+        self.setup_sub = rospy.Subscriber("VideoMotionTracking", MotionTrackerInfo, self.setupCallback)
 
-        #create Centroid Tracker
-        self.tracker = CentroidTracker.centroidTracker()
+        #Create Color Detector and Centroid Tracker
         self.detector = Object_Color_Detector.obj_color_dectector()
+        self.tracker = CentroidTracker.centroidTracker()
 
 ### SETUP #############################################################################################################
     def setupCallback(self, data):
-        self.unpack_message(data)
-        self.setupSub.unregister()
+        self.unpackMessage(data)
+        self.setup_sub.unregister()
         print("\n[MSG] Setup is completed.")
-        self.start_test()
+        self.startTest()
         
-    def unpack_message(self, data):
+    def unpackMessage(self, data):
         self.file_name = data.FileName
-        self.nrOfLaps = data.Lap
+        self.nr_of_laps = data.Lap
         self.videoPath = data.VideoPath
         self.path = data.DataPath
         self.hsv_low = data.HSV_lower
@@ -84,23 +73,20 @@ class MotionTracker:
             elif cnt == 1: 
                 self.lap_roi = [temp_roi[0]-self.total_roi[0],temp_roi[1]-self.total_roi[1], temp_roi[2], temp_roi[3]] 
 
-    def start_test(self):
-        self.setup_datafile()
-        self.update_timer()
-        self.test_started = True
+    def startTest(self):
+        self.setupDataFile()
+        self.updateTimer()
         print("\n[MSG] Test is running, don't shutdown computer.")  
-        self.run_test()
+        self.runTest()
 
-    def setup_datafile(self):
-        # header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
-        # self.lapFile = DataFile.DataFile(self.file_name,self.path,header)
+    def setupDataFile(self):
         header = ["Motion Tracking Test", "Lap", "Time pr Lap"]                                                                
         self.lapFile = DataFile.DataFile(self.file_name,self.path,header)
 
                                                       
 
 ### RUNNING ###########################################################################################################
-    def run_test(self):
+    def runTest(self):
         video = cv2.VideoCapture(self.videoPath)
         self.fps = video.get(cv2.CAP_PROP_FPS)
         ret, self.current_frame = video.read()
@@ -109,38 +95,36 @@ class MotionTracker:
         while True:
             ret, self.current_frame = video.read()
             if ret: 
-                self.prep_image()
+                self.prepImage()
                 self.frame_counter = self.frame_counter+1
                 
                 self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
                 self.objects = self.tracker.update(self.detections)
-                self.draw_id()
+                self.drawID()
                 cv2.rectangle(self.crop_img, (self.lap_roi[0],self.lap_roi[1]), (self.lap_roi[0]+self.lap_roi[2], self.lap_roi[1]+self.lap_roi[3]), (0,255,0), 2)
                 cv2.imshow(self.project_name, self.crop_img)
                 cv2.waitKey(1)
-                self.check_position()
-                self.update_laps()
+                self.checkPosition()
+                self.updateLaps()
                
             else: 
                 break
         video.release()
         cv2.destroyAllWindows()
-        self.stop_test()
-
-
+        self.stopTest()
         
-    def prep_image(self):
+    def prepImage(self):
         blurred = cv2.GaussianBlur(self.current_frame, (11, 11), 0)
         self.crop_img = blurred[self.total_roi[1] : self.total_roi[1]+self.total_roi[3], self.total_roi[0] : self.total_roi[0]+self.total_roi[2]]
 
          
-    def draw_detections(self):
+    def drawDetections(self):
         if  self.detections is not None:
             for i in range(len(self.detections)):
                 (startX, startY, endX, endY,_) = self.detections[i]
                 cv2.rectangle(self.crop_img, (startX,startY), (startX+endX, startY+endY), (0,255,0), 2)
 
-    def draw_id(self):
+    def drawID(self):
         if self.objects is not None:
             for (objectID, centroid) in self.objects.items():
                 text = "ID {}".format(objectID)
@@ -148,7 +132,7 @@ class MotionTracker:
                 cv2.circle(self.crop_img, (centroid[0], centroid[1]), 4, (0,0,255), -1)
 
   
-    def check_position(self):
+    def checkPosition(self):
         self.old_position = self.position
         if self.objects is not None:
             for (objectID, centroid) in self.objects.items():                                                           #FIX: WE NEED TO MAKE SURE WE ONLY HAVE ONE OBJECT
@@ -160,39 +144,38 @@ class MotionTracker:
                 else: 
                     self.position = False
         
-    def update_laps(self):
+    def updateLaps(self):
         if self.old_position == False and self.position == True:
-            self.lapCounter += 1
-            self.update_timer()
-            self.save_data()
+            self.lap_counter += 1
+            self.updateTimer()
+            self.saveData()
             sys.stdout.write("\r")
-            sys.stdout.write("\n{:3d} laps done." .format(self.lapCounter))
+            sys.stdout.write("\n{:3d} laps done." .format(self.lap_counter))
             sys.stdout.flush()
         
 
-    def update_timer(self):
+    def updateTimer(self):
         print("last frame: " + str(self.last_lap_frame))
         print("Frame counter: " + str(self.frame_counter))
         print("FPS: " + str(self.fps))
         print("lap time: " + str(self.lap_time))
-        if self.lapCounter == 1:
+        if self.lap_counter == 1:
             self.lap_time = self.last_lap_frame/self.fps
-        elif self.lapCounter > 1:
+        elif self.lap_counter > 1:
             self.lap_time = (self.frame_counter - self.last_lap_frame)/self.fps
         else:
             pass
         self.last_lap_frame  = self.frame_counter
        
 ### TEST DONE ##############################################################################################################
-    def stop_test(self):
-        #self.VS.stop_recording()
+    def stopTest(self):
         print("\n[MSG] The test has been completed and the data is saved.")
-        #self.camSub.unregister()
+
         cv2.destroyAllWindows()
 
-    def save_data(self):
-        row = ['', self.lapCounter, self.lap_time]                                                             
-        self.lapFile.save_data(row)
-        if self.lapCounter == self.nrOfLaps:
-            row = ['', "Total Time: ", (self.last_lap_frame-self.test_start_time)/self.fps]                                                             
-            self.lapFile.save_data(row)
+    def saveData(self):
+        row = ['', self.lap_counter, self.lap_time]                                                             
+        self.lapFile.saveData(row)
+        if self.lap_counter == self.nr_of_laps:
+            row = ['', "Total Time: ", (self.last_lap_frame)/self.fps]                                                             
+            self.lapFile.saveData(row)

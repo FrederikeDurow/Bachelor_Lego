@@ -28,7 +28,9 @@ class CornerDetector ():
     def applyCornerDetector(self, img):
         self.img = img
         gray_img = cv.cvtColor(self.img, cv.COLOR_BGR2GRAY)
+
         blurred = cv.GaussianBlur(gray_img, (11, 11), 0)
+        cv.imwrite("/home/frederike/Desktop/blurr.png", blurred)
 
 
         if self.type =='FAST':
@@ -45,14 +47,14 @@ class CornerDetector ():
 
         if self.type =='FAST':
             self.output_img = self.img
-            self.output_img[self.corners > 0.01 * self.corners.max()] =[0,0,255]
+            self.output_img[self.corners > 0.01 * self.corners.max()] =[0,255,0]
 
         elif self.type == 'SHI TOMASI':
             self.output_img = self.img
             for i in self.corners:
                 x,y = i.ravel()
-                cv.circle(self.output_img,(x,y),3,255,-1)
-
+                cv.circle(self.output_img,(x,y),4,(0,255,0),-1)
+        cv.imwrite("/home/frederike/Desktop/corners.png", self.output_img)
         return self.output_img
 
     def dataoutput(self):
@@ -108,13 +110,14 @@ class CornerDetector ():
 ## --------------------- How to use---------------------:
 
 # 1. Two image needed (should be from another class (ROI))
-#img1 = cv.imread('lego.jpg') # Original image
+img1 = cv.imread('/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/singleSpring.jpg') # Original image
 
 # 2. Create CornerDetector object (should be based on ROI at some point)
-#obj = CornerDetector('SHI TOMASI')
+obj = CornerDetector('SHI TOMASI',1)
 
 # 3. Apply corner detector
-#obj.applyCornerDetector(img1)
+obj.applyCornerDetector(img1)
 
+obj.drawCorners()
 # 4. Show result
 #obj.showCorners()

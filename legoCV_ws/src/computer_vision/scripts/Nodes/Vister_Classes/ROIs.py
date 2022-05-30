@@ -1,4 +1,3 @@
-import numpy as np
 import cv2
 
 class ROIs:
@@ -11,12 +10,12 @@ class ROIs:
         self.roi_added = 0
         self.roi_chosen = False
    
-    def get_rois(self):
+    def getRois(self):
         return self.rois
 
-    def set_multi_rois(self):
+    def setMultiRois(self):
         print("Select a region by clicking on its upper left corner followed by lower right corner.")
-        cv2.setMouseCallback(self.window_name, self.add_roi)
+        cv2.setMouseCallback(self.window_name, self.addRoi)
         while True: 
             if self.roi_chosen == True:
                 key = input("\n[USER INPUT] Do you want to:\n'd' - delete last region\n'r' - select another region \n's' - save chosen regions\n")
@@ -31,9 +30,9 @@ class ROIs:
                 else:
                     pass
 
-    def set_single_roi(self):
+    def setSingleRoi(self):
         print("Select a region by clicking on its upper left corner followed by lower right corner.")
-        cv2.setMouseCallback(self.window_name, self.add_roi)
+        cv2.setMouseCallback(self.window_name, self.addRoi)
         while True: 
             if self.roi_chosen == True:
                 key = input("\n[USER INPUT] Do you want to:\n'd' - delete last region\n's' - save chosen region\n")
@@ -44,15 +43,15 @@ class ROIs:
                 else:
                     print("[MSG] The pressed key is not an option.")
 
-    def add_roi(self, event,x,y,flags,*params):
+    def addRoi(self, event,x,y,flags,*params):
         if (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 0):
-            self.set_upperleft(x,y)   
+            self.setUpperLeft(x,y)   
         elif (event == cv2.EVENT_LBUTTONUP) and (self.roi_state == 1):
-            self.set_lowerright(x,y)
+            self.setLowerRight(x,y)
         else: 
             pass
 
-    def set_upperleft(self, x, y):
+    def setUpperLeft(self, x, y):
         self.temp_roi = []
         self.temp_roi.append(x)
         self.temp_roi.append(y)
@@ -61,7 +60,7 @@ class ROIs:
         pass
 
 
-    def set_lowerright(self, x, y):
+    def setLowerRight(self, x, y):
         self.temp_roi.append(x-self.temp_roi[0])
         self.temp_roi.append(y-self.temp_roi[1])
         self.rois.append(self.temp_roi)
@@ -70,7 +69,7 @@ class ROIs:
         pass
 
 
-    def draw_rois(self, image):
+    def drawRois(self, image):
         if len(self.temp_roi) > 0:
             cv2.circle(image, (self.temp_roi[0],self.temp_roi[1]), 2, (0,255,0), -1)
         for roi in self.rois:

@@ -1,37 +1,39 @@
 #!/usr/bin/env python3
-import rospy
+import os
+import sys
+
 import cv2
-import sys,os
 import numpy as np
+import rospy
+from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
-from cv_bridge import CvBridge, CvBridgeError
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(os.path.dirname(dir_path),'Vister_Classes'))
-#sys.path.insert(0,'/home/frederike/Documents/SDU-Robotics/Bachelor/Bachelor_Lego/legoCV_ws/src/computer_vision/scripts')
+from computer_vision.msg import ActivationTestInfo, RoiList
+
 import ROIs
-from computer_vision.msg import ActivationTestInfo
-from computer_vision.msg import RoiList
+
 
 class ActivationTestSetup:
 
     def __init__(self):
         #Initializations for Camera Stream
         self.current_frame = None
-        self.windowName = 'Camera Live Stream'
-        
+        self.window_name = 'Camera Live Stream'
         self.sub = rospy.Subscriber("/pylon_camera_node/image_rect", Image, self.callback)
 
         #Initializations for Test Info
-        self.testType = None
-        self.nrOfLaps = 0
-        self.fileName = None
+        self.test_type = None
+        self.nr_of_laps = 0
+        self.file_name = None
         self.path = None
         self.rois = []
-        self.testVideo = 0
+        self.test_video = 0
         
         #Initializations for Regions of Interest
-        self.newRois = ROIs.ROIs(self.windowName)
+        self.new_rois = ROIs.ROIs(self.window_name)
 
         #Initialization of message
         self.msg = None
@@ -43,81 +45,73 @@ class ActivationTestSetup:
             self.current_frame = bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
         except CvBridgeError as e:
             print(e)
-        self.current_frame = self.newRois.draw_rois(self.current_frame)
-        #cv2.namedWindow(self.windowName)
-        cv2.imshow(self.windowName, self.current_frame)
+        self.current_frame = self.new_rois.drawRois(self.current_frame)
+        cv2.imshow(self.window_name, self.current_frame)
         cv2.waitKey(10)
 
-    def undistort(self):
-        cMat = np.array([[1190.244030400389, 0, 729.660947406785],[0, 1183.894733755722, 562.2194095063451],[0, 0, 1]])
-        dist = np.array([[-0.2364909197149232, 0.09037841331243952, -9.091405949805423e-05, 0.001536567533562297, 0]])
-        self.current_frame = cv2.undistort(self.current_frame, cMat, dist, None)
+    def setTestInfo(self):
+        self.setLaps()
+        self.setVideoSettings()
+        self.setPath()
+        self.setFileName()
+        self.setRois()
+        self.publishInfo()
 
-    def set_test_info(self):
-        self.set_laps()
-        self.set_video_settings()
-        self.set_path()
-        self.set_file_name()
-        self.set_rois()
-        self.publish_info()
-
-    def set_laps(self):
+    def setLaps(self):
         print("\n[USER INPUT] Please enter number of laps:")
-        self.nrOfLaps = input()
+        self.nr_of_laps = input()
 
-    def get_laps(self):
-        return self.nrOfLaps
+    def getLaps(self):
+        return self.nr_of_laps
     
-    def set_rois(self):
+    def setRois(self):
         print("\n[USER INPUT] Choose all regions of interest.")
-        self.newRois.set_multi_rois()
-        self.rois = self.newRois.get_rois()
+        self.new_rois.setMultiRois()
+        self.rois = self.new_rois.getRois()
     
-    def get_rois(self):
-        return self.newRois.get_rois()
+    def getRois(self):
+        return self.new_rois.getRois()
 
-    def set_path(self):
+    def setPath(self):
         print("\n[USER INPUT] Enter the location at which all data and video files should be saved.:")
         self.path = input()
     
-    def set_file_name(self):
+    def setFileName(self):
         print("\n[USER INPUT] Please enter the output file name:")
-        self.fileName = input()
+        self.file_name = input()
     
-    def set_video_settings(self):
+    def setVideoSettings(self):
         print("\n[USER INPUT] Do you want to save a video of the whole test? (y/n)")
         while True:
             k = input()
             if k == "y" or k == "n":
-                self.testVideo = k
+                self.test_video = k
                 break
             else:
                 pass
-        # print("\n[USER INPUT] Do you want to save a videos of malfunctions? (1 - yes, 0 - no)")
-        # self.malfunctionVideo = input()
 
-    def create_test_message(self):
+    def createTestMessage(self):
         info = ActivationTestInfo()
-        info.FileName = self.fileName
-        info.Lap = int(self.nrOfLaps)
+        info.FileName = self.file_name
+        info.Lap = int(self.nr_of_laps)
         for i in range(len(self.rois)):
             rList = RoiList() 
             rList.RoiInfo = self.rois[i]
             info.Rois.append(rList)
-        if self.testVideo == "y":
+        if self.test_video == "y":
             info.TestVideo = True
         else:
             info.TestVideo = False
         info.DataPath = self.path
         self.msg = info
     
-    def publish_info(self):
-        self.create_test_message()
+    def publishInfo(self):
+        self.createTestMessage()
         testPub = rospy.Publisher("ActivationTest", ActivationTestInfo, queue_size=10)
         robotPub = rospy.Publisher("StartRobot", String, queue_size=10)
-        rate = rospy.Rate(10) #10Hz
+        rate = rospy.Rate(10) 
         self.sub.unregister()
-        cv2.destroyWindow(self.windowName)
+        cv2.destroyWindow(self.window_name)
         while not rospy.is_shutdown():
             testPub.publish(self.msg)
             robotPub.publish(self.path)
