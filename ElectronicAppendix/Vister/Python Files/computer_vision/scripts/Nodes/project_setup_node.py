@@ -26,7 +26,7 @@ def main():
         newProject = VideoMotionTrackerSetup.MotionTrackerSetup()
     elif test == "lm":
         newProject = LiveMotionTrackerSetup.MotionTrackerSetup()
-    newProject.setTestInfo()
+    newProject.set_test_info()
     rospy.spin()
 
 if __name__ == '__main__':

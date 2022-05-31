@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="computer_vision" type="ur_node.py" name="UR" output="screen"/>
+
+</launch>

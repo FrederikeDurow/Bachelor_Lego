@@ -107,6 +107,8 @@ class ActivationTest:
             crop_img = self.current_frame[roi[1]:roi[1]+roi[3],roi[0]:roi[0]+roi[2]]
             self.BB.applyBoundingBox(crop_img)
         bb_data=self.BB.getData()
+        print("Control Data:")
+        print(bb_data)
         self.BB.clearData()
         self.processControlPosition(bb_data)
         self.processControlSize(bb_data)
@@ -120,6 +122,8 @@ class ActivationTest:
             y_min = math.floor(y-(y/100*self.y_buffer))
             y_max = math.ceil(y+(y/100*self.y_buffer))
             self.pos_buffer.append([x_min,x_max,y_min,y_max])
+        print('Position buffer:')
+        print(self.pos_buffer)
 
     def processControlSize(self, control_data):
         for bb in range(len(control_data)):
@@ -129,6 +133,8 @@ class ActivationTest:
             h_min = math.floor(h - (h/100*self.size_buf))
             h_max = math.ceil(h + (h/100*self.size_buf))
             self.size_buffer.append([w_min,w_max,h_min,h_max])
+        print('Width interval: (' + str(w_min) + "," + str(w_max) + ')')
+        print('Height interval: (' + str(h_min) + "," + str(h_max) + ')')
 
     def beforeFirstLap(self):
         print("\n[MSG] Setup is completed.")
@@ -234,6 +240,8 @@ class ActivationTest:
                     self.result.append(0)
             else:
                 self.result.append(0)
+        print("after check_pos, length is: " + str(len(self.result)))
+        print(self.result)
     
     
     def checkSize(self):
@@ -244,6 +252,8 @@ class ActivationTest:
                 self.result[i]= 0
             else:
                 pass
+        print("after check_size, length is: " + str(len(self.result)))
+        print(self.result)
 
     def updateMalfunctions(self):
         for i in range(len(self.rois)):

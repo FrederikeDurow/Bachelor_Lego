@@ -38,7 +38,7 @@ class ur_robot:
         self.robo_service = rospy.Service("RunNextLap", Robo, self.serviceCallback)
     
     def startCallback(self, data):
-        #self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
+        self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
         self.start = True
         self.path = data
 
