@@ -27,7 +27,7 @@ class multi_color_dectector():
     green_lower = np.array([25, 52, 72], np.uint8)
     green_upper = np.array([102, 255, 255], np.uint8)
 
-    blue_lower = np.array([94, 80, 2], np.uint8)
+    blue_lower = np.array([94, 193, 5], np.uint8)
     blue_upper = np.array([120, 255, 255], np.uint8)
 
     #ADD MORE LOWER/UPPER FOR MORE COLORS
@@ -150,7 +150,7 @@ class multi_color_dectector():
     
 
 # ---- HOW TO USE -----
-videofeed = cv2.VideoCapture("/home/rasmus/Desktop/Test Videos/Test/20-04/Side (2).mp4")
+videofeed = cv2.VideoCapture("/home/rasmus/Desktop/Test/motion_speed_test.avi")
 time.sleep(2.0)
 
 #header = ['Lap Nr', 'Point 1', 'X', 'Y','w/2','h/2']

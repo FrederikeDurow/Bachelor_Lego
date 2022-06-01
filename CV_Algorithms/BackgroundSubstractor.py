@@ -73,7 +73,7 @@ class BackgroundSubstractor():
 video1 = "/home/rasmus/Desktop/Test/motion_speed_test.avi"
 
  # 2. Create a BacgroundSubstractor object (BBS or MOG2 or KNN)
-test = BackgroundSubstractor('MOG2')
+test = BackgroundSubstractor('KNN')
 
  # 3. Apply detector (first is the template, the other is the one to check on)¨
 test.applyBackgroundSubstractor(video1)
