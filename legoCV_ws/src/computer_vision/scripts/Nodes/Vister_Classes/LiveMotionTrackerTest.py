@@ -109,6 +109,7 @@ class MotionTracker:
                 self.stopTest()
             self.prepImage()
             
+            self.VS.changeText("Lap nr: "+str(self.lap_counter+1))
             self.detections = self.detector.applyColorDectector(self.crop_img, self.hsv_low, self.hsv_up, 200)
             self.objects = self.tracker.update(self.detections)
             self.drawID()
