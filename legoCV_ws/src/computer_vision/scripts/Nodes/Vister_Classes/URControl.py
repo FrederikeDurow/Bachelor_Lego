@@ -34,13 +34,13 @@ class ur_robot:
         self.frequency = float(input("[WAIT USER] Insert frequency of data saving (default = 500): "))
         self.robot_recive = RTDEReceive(self.ip,self.frequency)
         self.rtde_in_out =rtde_io.RTDEIOInterface(self.ip)
-        self.robot_recive.startFileRecording(os.path.join(str(self.path), self.output_file), self.data_to_record)
+        self.robot_recive.startFileRecording(self.output_file, self.data_to_record)
         self.robo_service = rospy.Service("RunNextLap", Robo, self.serviceCallback)
     
     def startCallback(self, data):
-        #self.robot_recive.startFileRecording(os.path.join(self.path, self.output_file), self.data_to_record)
         self.start = True
         self.path = data
+        #self.robot_recive.startFileRecording(self.output_file, self.data_to_record)
 
     def record(self):
         while self.robot_dash.isConnected() == True:
@@ -53,7 +53,7 @@ class ur_robot:
             return RoboResponse(self.testDone())
 
     def runLap(self):
-
+       
         self.rtde_in_out.setStandardDigitalOut(0,False)
         self.rtde_in_out.setStandardDigitalOut(1,False)
         self.rtde_in_out.setStandardDigitalOut(2,False)

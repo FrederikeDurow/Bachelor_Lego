@@ -36,9 +36,9 @@ def record_data(counter, frequency):
     dt = 1 / frequency
     start = time.time()
     #if counter % 10 == 0:
-        # sys.stdout.write("\r")
-        # sys.stdout.write("{:3d} samples.".format(counter))
-        # sys.stdout.flush()
+    #    sys.stdout.write("\r")
+    #    sys.stdout.write("{:3d} samples.".format(counter))
+    #    sys.stdout.flush()
     end = time.time()
     duration = end - start
     if duration < dt:

@@ -12,7 +12,7 @@ def establish_connection():
     #IP = '192.168.1.68'
     IP = '192.168.1.68'
     ROBOT_IP = IP
-    #ROBOT_IP = input("Enter IP-address of Robot: ")
+    #ROBOT_IP = input("Enter IP-address of Robot: ") This needs to be the final
     robot_dash =dashboard_client.DashboardClient(ROBOT_IP)
 
     while robot_dash.isConnected() != True:
