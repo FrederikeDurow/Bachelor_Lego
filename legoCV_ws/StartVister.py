@@ -19,14 +19,13 @@ roslaunch.configure_logging(uuid)
 
 # STARTING UP CAMERA
 launch = roslaunch.parent.ROSLaunchParent(uuid, [str(dir_path) +"/src/pylon-ros-camera/pylon_camera/launch/pylon_camera_node.launch"])
-launch.start()
+subprocess.Popen(launch.start(),shell=True)
 
 
 time.sleep(5.0)
 
 # STARTING UP VISTER
 launch2 = roslaunch.parent.ROSLaunchParent(uuid, [str(dir_path) +"/src/computer_vision/launch/computer_vision_start.launch"])
-launch2.start()
+subprocess.Popen(launch2.start(),shell=True)
 
-exec /bin/bash
 rospy.spin()
